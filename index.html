@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naama Rivlin-Angert</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1714;
+    --paper: #f5f0e8;
+    --cream: #ede7d9;
+    --rust: #8b3a2a;
+    --rust-light: #b85c46;
+    --gold: #c9a84c;
+    --muted: #7a7068;
+    --border: #d4cdc0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: var(--paper);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3rem;
+    height: 60px;
+  }
+  .nav-brand {
+    font-size: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .nav-brand:hover { color: var(--rust); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links button {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+  }
+  .nav-links button:hover,
+  .nav-links button.active { color: var(--rust); }
+
+  .page { display: none; padding-top: 60px; }
+  .page.active { display: block; }
+  #home.active { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* HOME */
+  .home-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 60px);
+    width: 100%;
+  }
+  .home-left {
+    padding: 5rem 4rem 4rem 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .home-left::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--rust) 0%, var(--gold) 100%);
+  }
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 1.2rem;
+  }
+
+  /* Name row with photo */
+  .name-photo-row {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 1rem;
+  }
+  .name-photo-row h1 {
+    font-size: clamp(2.4rem, 4vw, 3.6rem);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    flex: 1;
+  }
+  .profile-photo {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .subtitle { font-size: 1.1rem; color: var(--muted); font-style: italic; margin-bottom: 0.4rem; }
+  .location {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Social row with icons on one line */
+  .social-row {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: nowrap;
+    margin-bottom: 3rem;
+    align-items: center;
+  }
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .social-link:hover { border-color: var(--rust); color: var(--rust); }
+  .social-link svg { width: 16px; height: 16px; fill: currentColor; }
+
+  .home-bio { font-size: 1.05rem; line-height: 1.8; }
+  .home-bio p + p { margin-top: 1.1em; }
+  .home-bio a { color: var(--rust); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+  .home-right {
+    padding: 5rem 4rem 4rem 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+  .home-right::after {
+    content: '\275D';
+    position: absolute;
+    bottom: 2rem; right: 2rem;
+    font-size: 8rem;
+    color: var(--border);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .recent-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.8rem;
+  }
+  .recent-item { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+  .recent-item:last-of-type { border-bottom: none; }
+  .pub-venue {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rust-light);
+    margin-bottom: 0.3rem;
+  }
+  .pub-title { font-size: 1rem; font-weight: 500; line-height: 1.35; }
+  .pub-title a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--border); transition: border-color 0.2s; }
+  .pub-title a:hover { border-color: var(--rust); color: var(--rust); }
+  .pub-year { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); margin-top: 0.3rem; }
+  .more-research-btn {
+    margin-top: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rust);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: inline-block;
+  }
+  .more-research-btn:hover { text-decoration: underline; }
+
+  /* INNER PAGES */
+  .page-container { max-width: 800px; margin: 0 auto; padding: 4rem 2rem 6rem; }
+  .page-header {
+    margin-bottom: 3.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 60px; height: 2px;
+    background: var(--rust);
+  }
+  .page-title { font-size: 2.4rem; font-weight: 500; letter-spacing: -0.01em; }
+
+  .research-section { margin-bottom: 3.5rem; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .pub-card { padding: 1.8rem 0; border-bottom: 1px solid var(--border); }
+  .pub-card:last-child { border-bottom: none; }
+  .pub-card .venue {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rust-light);
+    margin-bottom: 0.5rem;
+  }
+  .pub-card h3 { font-size: 1.1rem; font-weight: 500; line-height: 1.4; margin-bottom: 0.7rem; }
+  .pub-card .authors { font-size: 0.9rem; color: var(--muted); font-style: italic; margin-bottom: 0.8rem; }
+  .pub-abstract { font-size: 0.9rem; color: var(--muted); line-height: 1.7; margin-top: 0.8rem; display: none; }
+  .pub-abstract.open { display: block; }
+  .pub-links { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 0.8rem; align-items: center; }
+  .pub-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rust);
+    text-decoration: none;
+    border: 1px solid rgba(139,58,42,0.3);
+    padding: 0.25rem 0.6rem;
+    transition: all 0.2s;
+  }
+  .pub-link:hover { background: var(--rust); color: var(--paper); }
+  .toggle-abstract {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .toggle-abstract:hover { color: var(--ink); }
+
+  .more-section { margin-bottom: 3rem; }
+  .more-list { list-style: none; }
+  .more-list li { padding: 1rem 0; border-bottom: 1px solid var(--border); font-size: 1rem; line-height: 1.6; }
+  .more-list li:last-child { border-bottom: none; }
+  .more-list a { color: var(--rust); text-decoration: underline; text-underline-offset: 3px; }
+  .tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.5rem;
+    color: var(--muted);
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+  .cv-download {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--paper);
+    background: var(--rust);
+    text-decoration: none;
+    padding: 0.9rem 1.8rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+    transition: background 0.2s;
+  }
+  .cv-download:hover { background: var(--rust-light); }
+
+  @media (max-width: 768px) {
+    .home-inner { grid-template-columns: 1fr; }
+    .home-left { border-right: none; border-bottom: 1px solid var(--border); padding: 3rem 2rem; }
+    .home-right { padding: 3rem 2rem; }
+    nav { padding: 0 1.5rem; }
+    .nav-links { gap: 1.2rem; }
+    .nav-links button { font-size: 0.68rem; }
+    .name-photo-row { flex-direction: row; }
+    .profile-photo { width: 110px; height: 110px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <button class="nav-brand" onclick="showPage('home')">N.R.A.</button>
+  <ul class="nav-links">
+    <li><button id="nav-home" class="active" onclick="showPage('home')">Home</button></li>
+    <li><button id="nav-research" onclick="showPage('research')">Research</button></li>
+    <li><button id="nav-cv" onclick="showPage('cv')">CV</button></li>
+    <li><button id="nav-more" onclick="showPage('more')">&amp; More</button></li>
+  </ul>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <div class="home-inner">
+    <div class="home-left">
+      <div class="eyebrow">Postdoctoral Researcher · Political Science</div>
+      <div class="name-photo-row">
+        <h1>Naama<br>Rivlin-Angert</h1>
+        <img class="profile-photo" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAlgCWAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCAKwAu4DASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDymlooqShaKKWgApaKKQBS0UtABS0UUALSikpaBi0tJS0AFFFFACUUtJQAlFBooAWiiloAKWkpaQC0UUUDFpaSloAWlpKKQC0tJS0AFLSUUDCloooAKKKKAFooooASilooASilooASilooASiiigAooooAKKKKACloooAKWkpaAFooooAWiiigAopKKACkNLRQAlFLRQAlFFFACUUGkoELRRRQAUlFFABRRRQAlFFFACUlOpKAG0lOpKYCUhp1JQAlJS0mKAEpKWimIbQaKKAG0hp1JQIbSU7FJQBHS0UUwFoopRSAKWkpaAFoopaAClFJS0DFpRSUtABS0UtIAooooGJSU6koEJSUtFMApaSlpALRSUtABS0UUDFopKWgBaWkpRQAtFApaQBRRS0DCiiigQUUUUDClpKWgAooooAKSlpKAClpKKACiiigBKWiigQUUUUALRSCloGLRSUtABS0lFAC0UlLQAUUCloASilpKACiiigApDRRQAlFFJQIKKKKAEoopaACiiigBKKWkoAKSiigBKKKKYBTTS0lABSUUUAJSUtJQIKSlpMUwEpKdSGgBtIacabQIZRRS0wEpaKKQC0tIKWgApaKKAFpRSUtAxaKKKAFpaSikAtFFFABRRRQAlJS0lABS0lLTAKWkpaQBS0lFAx1FJRQAtOFNpRQA4UtNFOpDCloooAKKKBQAUYpaKACiiigAooooAKKKKAEopaKACkpaSgAooooAKKKKAClpKKAFooooAWikooAWlpKKAFpabS0ALSUUUAFJS0lABRRRQAlJS0lABRRRQIKKKKACiiigYlFFFAhKKKSgApKWkpgJRRRQAlJS0lAgooooASiiimAlIadSYoAYaSnEUlAhlFFLQAlLRRQAUtFFAC0tJRQAtLSUtAxaWkpaQBRRS0AFFFFABRRRQAlJS0UAJS0lLQAUtJS0AFLSUtAwooooAWikpaAFBpwNMpc0gJBS0wGlzQAtFFFAxaKSigBaKKKAClpKWgBKKWkoAKKKKACkpwGe1IaAEopGIUbicD1qF7uJP4s/SgRPRVT+0I+ymgahF6GnYLot0tVRfwk4ORU6SJIMowNAD6KSlpAFFFFAwooooAM0tJRQAtFJRQAtLSUUAFFFFACUUUlABSUtJQIKKKKADNFJS0AFFFJQAUlLSUAFJSmkpgFJS0lACUUUUCCkp1JQAlJTqTFACUlOppoAQ0006kpgMoopaBCUtFLQAlLRRQAUtFFABS0lLQMWlptLQAtLSUUgFooooGFFFFAgpKKKACiiigApaSigBaKKKAFooooGFFFLQAUUUUALSg0lFADwaWmCnCkMWiiigBaKSloAKKKKAFpKQyKv3jimG4jB4Jb6CgCQ0wyxr95vyqGW53g/uiB9aYsnyjairTEStdDOERvrULTyOSASPcUjjzD80n4ZpnlJn7zD8KADZIThmyD6mmNZuc7DyP4SasDy4+A5YH+8MilKxu4yBjP8NO4rGfJBNH95GA9cVHnitxomUZBfYejKePx9Kha1SXOdpYd+houFjJpVdkOVYg+1WJLXy8/Kc+3NQtEf4TmmTYmjvpl4JyPerUWoI/DDaazMEHkUh60WHdm8sit0NOrDjmZD1OKtw3hBwTkVNhqRo0U2Nw65p1IoKWiigAoopKACiiigBaSiloASilpKAEopaSgBKSnUlAgooooASiiigBKKWkoAKSiimAlFFFABRRRQIKKKKAEooooAQ02nU00wEpDS0lAhtFFFABS0UUAFFFFAxaWkooAWiiigApaSloAKWkpaQC0UUUDCiiigQUlLRQMKSlooASilooAKKKWgBKWiigApaSigBaWkpaAClpKWgAFLSUtIBaKKKBi0U1mCjmq7zqcjOT6CgC2WVRnkmq8k+Gw2R9KYN8hATp6npUiwqSF5Z+3pTEQmYHGFz9aekjk428ewqQW+05kPf7o60rXLQj5EA9MigYq2czqW2gAc8mmM6w4BKsR1FVpLuZz80h/Covmfnt60WFctSTxsP8AVg/pUP2g425Kiom4/iBP1o3Ec44oES+cvTBzSeYB1Vh7g0wyZUdQaQMTnkgd6YFqK4aM/u5jj0Pep8rODIuFcdj0NUlBxlSMe9TQkqSM7cn6ikMkVTJmNlIYfdB/lUEtvk/MD9cVoxOMjzM5I4PWpLiBVYYKlXGR6UXCxzzowOD2qPGfateaJWT5h09Kz5Y8EjIJ7e9UmS0VjxTgaDTelBJctLvyjtY/Ka1EZXGVORWADVuzuTG21j8ppNFJmtiimq4YZBzTs1JYUlLSUAFLRRQAUlLSUAFFFFABRSUUAFFFJQAUlLSUCCkpaSgAooooAKSiimAlFLRQAlLRRQAlFLSUAJSUtJQIKaadSGgBppppxpKYDaKKKBC0UUUAFFFFABRS0UDClpKWgApaSloAKWiikAUUUUALRRRQAUUUUDCilooASilooASlopKAFooooAKWkpaACiiigBaKSloAWlpKWkAtIzhBk9KdkIpZjgVQlla4kCxg4oAbLM8z7V6VZtbUKoZhk5/CprWxVBuk5z2FXWRFUMeAOq98UXGkQGPzGCDA/kKfGnPlxgcHkscCguGXekYVB3JwMVQvL9pzsTAXoWx1oGWLq9igykbb2/2eB+dZsk7yA5AGTnPekUZz3+lPW3Y/eAQerGmSQ80de1P24PBLfQVL5LhdzfKD0GKYitgjPagFRnJJqVvK7sc1G21eij86AFKqORuI9xSKVJ9f0pN3+ycHqKay4OR07GgC0PLx9wgnphqFaPldxU+hFU/f+VKc9c5osK5sQMAuG4P8JqwpSYMn97oAfut7ViwXTRd8gfwmr0cuQjxnHsO1KxSZHLM0ZaKTqOM1VuFBIx/+url4vnpv6N3qkW/dlW6imhMgPXB/OmsuDT27559KZnI5pkjaM0UUCLNtdNC4BOVPatZWDrkVgitWxkDxgZ5FJlpluiiipKCilpKAFpKWkoAKSlpKACiikoAKKSigQZopKWmAlFFFABSUtFIBKKWimAlFLRQAlFFIaAA0lFFABRRSUCCkNLSUAJTTTqbTAbRRRQAtFJS0AFFFFABS0lFAC0tJRQAtApKWgBaWkpaQBS0lLQAUlLRQAUUUUAGaWkooAWkoooGLRRRQAUUUUAFFFLQAUUUUAFLSUtAC04YALNwopgGSBUN1NvPlr0HQUgEmkMzbRwvYCrlhZA5duFHX/CmWVuHYcnd3bsBWq7x28e77oHCKOv1+tDKSIpJI7VWIGZDwB/dquFOTJP35IoXlxLIfnPT2qrfTlm2IT/WgCG8vHnPlqNqA9BUKQs/0qeCz3ctkc88VY8rbwMBR1PpQIqgCI7Y03OO/pTHAGWkYlvSp5WVBtUFB6nqaqlgOV5PvTAXe38C7c+tMclvvOSaQvk5ySakhgmmORH8o7ngfnQIhxmmkAd6t+QCxV5NwHZBgVG8ar0UgeppiIQCRSBj90ng9aewIGQwPtim5DjBwGH60CGnINI3QEGnZ4x3FAAOQaYDeHHoakt5fKfnpUQGD+lL1agDVBDRuMg4HT2qhcLjkHtzUlvJt49B/OiRd4J9uKQ9yoTwDUdPA7UxuDTJEoHNFJTEOqS3nMEobt3qLNFIDfVg6hhyDS1T06bdF5Z6r0q5UmiFzRSUUhhRRSUALmkzSUUCFzSUUUAJRRRQAUUUUwCiiigAoopKADNGaKSgBaKSloAKSikoEFJS0lABRRQaACkopKAA0lFFMBtJS0UAJS0lLQAUUUUAFFFFAC0UlLQAtFAooAKUUUUALS0lLSAKKKKACilpKBhRRRQAUtJS0AFFFFABRRRQAUUUUALRRRQAUUUHgEnoOtADJ5/Kj2p95utMtLdnIJGS3QVFjzZa27GJY4tz/AH24HsKTGiSIR2kQLDLA9B/EaquzXNyGk49hUsz75NyjCJ8qf1NSRRLg5+XAyxPYUhledljjzjlvugDrUVtaNKTM46ngetSMjXEglbiMD5fYVb2ttHyEAdh2FAxrRY+VWwmcE4/QVUn2xqEjyzeo6D/E1ZmbfGdrYUcMw7+wqjdyIcLGcge1AFNwMks25s9BQsTSEKx2j0UVJEhycocH86c8Mx6Lhf8AZNUSMLQ2xwqh3I+tOklup8GQEKOgHFPjg4+4APWp2jMceQwC0AUXaQYHzYqEucnPappXBA2ggjr71BIwcA96EKw12Gcr0Pb0qMtSkcU0imSGc0qHP1pB15pUHzUwF6g0YJfA6k0L1NKvDg0ASYIdvccVIjfKc+mBUZ7np2obIwKQEb/eJquetWZBjFVz1piEopaSgQlFLRTAmtZPKnU546GtnOR1rArTsbjem1uoqWUmXKKOtFSWFFFFAhKKWigBKKXFJQAUUUUAJRS0lMAooooAKSlpKACiiigApDRRQAlFFFAhKKKKACkoooASkpaQ0wEoopKBBRRRQMKKKKACiiigAooooEFLSUUDFFLSUtAC0UlLQAtLTaWkAtFFFAxaKSloAKKKKACiiigAooooAKKKKACiiigBaKSloAKiuXwqoO/JqUVUly8uB1JoAt6fb+bLk9O5rSuHQYjHQdcVBChtrdR/GR0qSNcYVzljyx9qRQN8xDAYGOBUsj4hW3HOeZD/AEpm7YnmnB5wB70m4BNpJ+YZY96QyS2TzDlB8oPH1q6YoghDcKPvn1psX7lBhQGxnHoOwrK1XVDgwR4J7kdM+tLcewy/uY2yiAgBuAKqIMjJJUZ5Pr9KdZW3mt5kpPPTPenXrJHhBgkdh0FUSI0yx8pE271JzmoDqLnggA+1QtI544A9KnjhdwCyZ9OKeiErsmgu5AAxwFHPPeo5roysXC456DoK0bbRprnC7QFPrxVqTwtNGuQAcDJANRzIvlZzTybzn1oABNadzo8sGGZCFPXj7v1qIWLA8r7U+ZE8rKax5G0/nTGjwxHpV77OeCRjH61HJD8xzTuKxS280AYzVhoj1xxTRFnrwKdxWIwMKTQo6GnlSeOwpp/SmKwoPr0HWkzubP4mk5bjtSgYXJ4FADJDlqixwKlI3HcelMYYFMQxhzTcU49aSgQUlLSUAFSQSGKQN271HRQBtxvuUEcg1JVKwlzEVPVTVtTkVJaHUlLSUgFopKKAFopKKAFooooASilooAbRRRTASiiigAoopKACkpaSgQUUUUAJSUtJQAUlLSUAJSUtJTAKSiigQlLSUtAwooooAKKKKBBRRRQAUtJS0DClpKWgApRSUUAOopKWkAUtJSigAooooGFFFFAC0lFFAgoopaBhRRRQAUUUUAFFFFACk7VZvQU3T4vNmMrdB0ps7ERYH8Rq5aKsdt1xxj6mgB8r7pc4wAOtSwAsrMeGbqarlSAqk5JGTVpwI7ZCnLyHao9PekUNXbK5cH91Fkc9z3NWLVFWM3EnXPy57ntURiVVWEZAX71RXF7tXbGMqM7f8aQxup3vlxmNW57kVkIhb96+dufzp5HnuZJGxGvJzTWk85hgbUHQVSJepp2zjyTIeAowCegqhKAzk9ST2qzt3Rrx14Vf61esNNdyH29+Tis5SUTWMHIpWumhsSOpAro9K0d5sStENg+6K19M8PtKFaWP5B0THX610tnpUgIG0KoGAAOlc0qtzpjRsZdtpflKCsWARzwMD1rRmsIyqhkUA4AHetqKy2g8ZA46VFNa4+7jGe/asnNmigjm73S4JEbCcFcZ9TXM3elCMjbkuOMAV6HJaHbhSAKybzTWck/0qo1LEypnns1m68Y4HGQKrNbDODn1rtp9IznIP0qi2iMSfkx+Fae1RHsWchJbA8KpphtmJ5XjtXZR+HGY5K1N/wAI4ickHij2yQ/YXOCa2YDgH8qge3b+6a9BbRIiMbcVn3mjKuQoH0qlXRLw5xRiK8mmMCevSty60/bnjFZU8BQmt4zTOeVNorcCo2PNPYYqM1oYsaTSUppKZIlFLSUAFFFFAE1rL5cwyeDwa2ARjjpWDWpZTl4gp6rxSY0y3RSZoqSgooooAKKWkpgFFFJQA6kpKWgApKWigBMUUtJQAlJS0lABSUtJQIKSlpKACkoooASkpTSUwCkpaKAEpKWkoEJRRRQAtFFFABRRRQMKKKKBBS0lKKBhS0lLQAtFJRQAtLSUtAC0UlLSAKKWigBKKWigYlFGKKAClpKWgAopKWgBKKWigApRSVJCoMi56Dk0ARzr+9VT0Qc1LC4b6DoKhmYeYxHVjirMKKiZ98UDJFyWGOW6mrUaebMGZsxwDA+tVoizGSTHXgCrWPKs9mcBRuY+pqRkdw4VGQcM/XHp6VlzsFG3vVppicyE8dQKy7mRixx1P6U0DGkmeQRr9wdanto/OnxjCDk1HHiC1JH3n4FW7OCSSSO0iGXkPzEUSdkOEbs2tG0t9RuflBKZ6+1ekaL4djhjDGPJ7VF4X0FLK2jUrk45NdjDGEXHSvOlNzZ6KSgivDYpGMbB7cVOsar0GBUw65pGxmlYjmbITtGcfjUToCelTtjJx3qJhzUsuJWeMYzVOZB6ZNXnbH0qq/3qhs2SKMkC5yajMPACgZPY1bfknimkADpzU3HYg2bQRgVVkRRnPSrrDPBqtMqkFfSgZUlA8vcAPase4+bPPP0rVnPy4HSsm4cDIwatAYd0nL7iCCfyrFuoevFb9zhgWHQ1kXIzn3rpgzmqRRhzREE8VVZcGtaRPUVRmjxyK7IyOCcCqaSnsKYa0MQNNp1JQISilINJQAqnmrdjne2OlU6sWsvlyc9D1oYI0wafTA6nB6j1FPqSwooopALRRRQAlFLiigBMUUtJQAUlLSUwFpM0lFABSGlzSUAFJS0lABSUUlAgpKWkpgFJSmkoAKSiigBKSlpKAFooooAKKKKACiiigAooooEFFFFAxaWkpaACiiigBaKSloAWlpKWkAtFFFAxaKSloASilooASiiloASilpKACiiigAqVCER29BUdOuTsiSPpkZakMhX55RkcgbjVnBX5sfdFV7ZdwaUj7zYFXreLzME5Cg5PvQCLEKCOOOMDLkZP1NJclSqx9M8t9KktkLyNLL24qp5jS3TnqWGAfSkUirdPtwo4J5rOVTLN16nrVq9kyTt78CoI8IhbqW4X+tNEsc5HmDAwF4UV2ngDSDdXbXTrkDpxXFohdwo5JOK9u8GaR/Z2jxblw7jJrmxErKx14aP2jorWBYkGBwOKtBqjUYFPFcaN5ak27iombJ6UmSKCTVXJSEJqJzxTyajf5sipZpFEMmTUDVNIeOKhbkd6g3RA+T7VESfWpnHOe3pULZpDIyT1qvKw6d+9WHPFVJSMEjr70AULljtx2zWRdDIOPwz3rWmyQaypwTk+lWhNmVNhcrjisucfMa1bkZ3H/JrMkXLc10RMJlGROtVJV61oyriqUq5zW8Wc00UHXBqBhVuRarPXQmcckR0UGjNUQFJRRQAU+JsMKZQDQBqIAAGXjPbtU6NkVUt5eAu4EHp7VYztb0qSkTClpoOaWgYtFFFABRRSUgFpKKKYCUUUUAJRS0lACUUUUAJSUtJQIKSlpKACkoopgFJS0lACUUUUAJSUtJQIWiiigYUUUUAFFFFAgooooAKKKKBi0tJRQAtLSUtABRRRQAtApKWgBaWkpRSGLRRRQAUtJRQAUUUUAFJS0lABRRRQA5Rnj1NQ3cwcsR9KmLeXEW6cVQOXZV7k0AXohshjU+mT+NaNrmO13MPvnj8aoBPmC9cnaK1bnbHGgPG1sKB7DH+NJlIjuJPIt8KcAA/jms0OUhL93OAfQU+8leRUhA+Z2qG5KqAinIQYBpD6lWT52JHAXpTCfm4OQOFp03yBV7nk0xemfyqiep0Hg7Sv7U16CMrmOM7mr3a3iVI1UDAAwBXBfDPRPsunm+mTDzfdyO1egivMqy5pnpwjywSHU9aYB0p4Bz7VCEwxSMO9PppPBpkpkfao2qR6jPNSzWJC/OaiZSKnccHHWoSOKg1RXZeOtQMvPrVphnP0qFxigZVkGBjpVWXp7fWrsg/Oq0i9MdKAM6Zfl4Y1lzrhj71rT4GQKzLn09e9WiTJuV6+lZrjJJrUuVxweTWdMMH0raJnIpSj8apyDg8Vebk4qtMuM1tEwkjOl61WcA1bkHNVJODXTE45ogNJTmpuK0MQopQBTgM9KAGUU4im0ASwpv6HB7VcinJPly8N2PrVFHKNkVZBEw/2uxpMaLynpT6rQOWQBvvLwasCkUOopBS0AFFJRQAtFJRQAUlLSUAFFFJQAUhopKACkpTSUCCiiimAUUUlABSUtIaAEpKWkoEFJRSUAPoopKBi0lFFAgooooGFFFJQIWiiloGFLSUUALRRRQAtFFFABS0UUgFpaSigYtLSUtABRRRQAUUUUAFFFFACUdaXHGafEN79Pu80AQXr/diHaorZQJwzDIHP5Uly++YnPfFTwJtRn67VoGWrRN84PZAWNS6hIWlVMkFQAfrTbL5LcseSx5qtdTFmdzyTSGMMmLl5R/APl+tMEZLqnX1qONtrZPXOfpViLKo8pPYnJoYIozndM3scVf0PTm1XVre0UcOw3ewrOxuOe5NenfC/QMiTVZl6/JH9O9Z1ZcsDWjHmnc9C0+1S1tI4Y1wqKABVzFIo2jpT15rzTubAU4UDmnLVJEMKQgUtIeaolEZXNRmpGGDTGqGaoibrx0qMgHNSt3xUR4yKhmqI2AOTioZB1qZx3z+FROepzSKKzjFVmBOc9qsynjrVZx1xQBQnU7jzxWZc8kjrite4TK9ccVl3EagZqkJmROvPTHpVGaMvWlMgBPOKrOuMkVsjNmRLGVaoZ03R7vTrW2bIyplVyaoXNm8QIPAbvWqkZNGDMOTVOUYNX502sR3qpIuRXTFnJNFM8UlOcUytjlYufajNJRQA4Ghh3HSm04GgBKljymHXkd6jI7jpUtuc5U96ALMLjzwR0YVbrOQ+XIp9K0QQygikykOpabS0hi0UUUAFJRRQAlFFFACUUtFADaKWigBtFLSUAJRSmkoEJRS0lMApKKKAEpKWkoEJSUtJQA6iiigYUUUUAFFFFABRRRQAUUUUAFLSUtABRRRQAtLSUUAOopKWgApaSlpAFLSUtAxaKSloAKKKKACl4A9TSUUABJNSr8luzdzUWPWny5ICL0ApMaM770v1arpVlgH/AE0bFV4UBulXqM81dnDblXsgoGi3KDHFhSAI4vzrGnkJGfxNat38lkSOGZgD9MViTN81CEyVOFx3NWbkeTYhO7Yz9KhtI/NmRcZycmpdRIa6Ea9BgUdR9CtFFukRfWvcNB1HTtK0e2tfNUbEAPPevHIIGa9SIA5+Ufma9GtfDF88Q8wduCp5rnrWdrs6KHMk7HbxazYy5CzDPvVyORHGVYEexrg18K6gFJBZCvTnNQSwa3pp3iSbgclelYciezN7tbo9HVs04HHSvOYPFurWp/e7ZARwGGKu2/xCHmeXdWhX3U0ezkhcyZ2+7NBYVztp4u0u7OFm2swyAa1I72GbDJIrD2NZO6NFFMtsR1qMvk1G8vHBpAe5qbmiiDHj8ajBG45p56d6rSPt46VLLSCaTpt6Cq8j8be5/SmyyYB9KrSS4wepFIZMegGc1ER970HemPcKF6/hVSbUreH/AFkyrn3ppNibSJJUyPmPSqUoUqenHFZ154mt4w3lkyk9AOlYV14mupWPlqqA+tbRoyZhKtFG80agjcB161WlaEMx3Lj61zM2o3Uz5lmJB/hBqqyXtwWYB2z2ArdUbbsydZvZHVLdJE2d6kEdM0y8mimg3BlIPUelcobS9UbmjdcdKY0lygwciqVJdGT7WXVEt8hDVSIyKka5Zhtfk+tR5zWqVjJtMqTLg1CatzjiqhrWOxzzVmJRRRVEBRS0lADge1KuUbIplOBzQBY++matW78bT1HWqKNjj1q2/G1x1xzSGi31pajR8gehp9IoWikooAWikooAKKKKAFpKKKACiikzQAUlFFACUUUUCEpKdSUAJSUtJTAQ0lLSUCEpKdSUAFLSUtAxaKSigAooooAKKKKACiiigApaSloAKKKKAFooooAKWkpaAFzRTacKQC0tJS0DFooooAKKKKACijFFAB1IpHOEd84wMClHBz7VDOWIVR0JpDQlr8r7+9WyQX5OeRn3qtGuAD6mpNx+QjqzE5oGifUJcwpGeuC5PrmsV23OAKv30u+T5TlQMD6CqEXMmfSmiXuauljYzyn+EVHGplvsltxJp9uSIyudoYc/Snaeo+1Fj0FIstWj7NTEp6hwfyNe02F4slrGwPVRXiVuP3+ema9G0LVAdKQs+PLGDXFX3PQw9uWx26zqByw/GmXEsLriTBH6VxEniOSYO0Uoht0baZWGcn0ArOm8UWSPtkM07erNwfoBWcYSZU5RidPqVhpVwCGCZ9elczeaJat/qZsc8Yao7bX7zUmkj0+xMvkrubyIQxVfU8VljxgDMy+ajKx/5aRDg/lWipzRn7SD3Lf9gyL91/oQelT20esae+YmZl9Aar2OthmAchVJzlTkV1tknnxiRMMPbtUycluaRUXsN0fW57iQR3ClW6ENXUxfMobse1ZUFkjuC0eG65xW1Em0ADoKwe5d7IjcHHH41n3Dbc5OMCtWUfL/AErE1FiFbsR0zUtFxd0Z91eBF+93rEvdcEQIjIyPU1Hqd8EYqO/6VztxMHOWNaQiuopX6Fm81y4myquwz6HGKy3lkdvmJk4pwkDNhRVqO3jVRJdSeWnoOprpTtsjmlFdWUkt7mbjgE/pWtp/hgTENNMAD15pbe6TKrZ2DSFiAPlLFvaoL7xFLaXD20ttFbzQna6MpyD6VTU2Z3pxOnt/D2l2qg+UrN6sadOltEu1Ain2ri/7enlIwy5x/CxWmvqV0HCq5dj/AAk5/Ws3SmaqrA3b6VAhG4HsK5+8dSx4A9qQ6j5rbWbD/XNV52z1pxi1uEmmtCpKgY5FRgYqYjNRsMVumc7RBN901TNXpBkGqbDmtYHPUQykpaKsyDNLxSYpOlAC0dKTNFMRIGBHvV+Jg8Q+lZwq1aPg49aTKRYhO3KH8KsA1XPDg1OpytSUOoopKAFopKKAFopKKAFopKKACkpaSgAooooASiiigQlFFJQAUlFFMApKKSgQUlFFAC0UUUDCiiigAooooAWiiigBKKWkoAKKKKAFpaSigBaKKKACloooAKKKSgB2aWm0tIB1FJRQMWlpKKAHE5pKKXFADWOFJqHJc47CpZTtFMiBC5/vGkMkVMuqgEgCmK++bdnCqCQPSnsTFEzdyMCqm7aj+4xSWrKeiGSvuZiPSmQjHNBPIHrxToh0571RHUuu+2LHcjirNgNiSMOf/wBVUZDmRfQVqWAH2RuM7iKhvQ0SuxhARl7EcVrR3ZitXhUkBu4qh5ZkmUAdTmuq0nSxK67lyOK5akl1O6mn0OeSC6vJVjCtFb4wCR1Fdn4f0LTI0AWIGQjBeTk1uW+iQKo3RqwC4HFaEWkxxlSpwAv3ewqVVuxunG2p5il9qnhY6pZWEcSvc5jkdxyBzgr+dcna6bM9wA67Rnk5r3WbS7aXcZbeB9xPJHOKzzpFhbuWjt4U57JnFX7ZpWMvYxbucPpukr5TsYWKnpx1rb8OzXVldbZRtiLbSrD8q3vOtomEcaB3J6YqzbRwTSov2ZXcd8Vg59DoUDcihRocr0IyKcooiQRpgce1OqXqTca6/LyK5zXG2I7ZxxXSSnCZ9q5PxE4MDnmpa1LgcFqU4aUgdqxrmU5xV66JMjZ9aprFvmBPQV0QVhTbYI7wKuxGeVugArd0vSZnlSfUYHZTg428L+FauhpbqA7QKzjqTXXQSwuo/cqRjtQ52I5TI1C4udO0j7ZoZhWWPG9TGCdo7gGvKNQt7q5vpbmaQSSTOXZvUmvcHtraTDeo5B7ViX2ixl2kEUD5PAKCrVexk6Ce55YLJhEq9+gp7wOD80LFOmeld1cadJbq8gaKNF6lUArEvYFO75i7fSnGqN0VY59bKARl42kY54QnGKdgmLLMu4dgallgkjywGKjiiLNlgMZ7Vo2mjOKcWRYAFQyHJrTlhwvA/SqEi4JqYsqSK5XNVJlw1XiKr3C962i9TCotCpRS0YrU5xKSlooEIRSU7NGKABetPjO2QfWmDrUsowwIoAvsOAafGccVGh3RLSocYqSiYdKKBS0DEpKWkoAKKKKACiiigAooooAKKSigAooooEJSUtJQAlFLSUwEpKWkoEJRRRQAtFFFAwooooAKKKKAFopM0tABRRRQAUUUtACUCiigBaWm0tAC0UlLQAUUUUgCloooAKWkpaBi0UUUALSj1pKXPGKAI7jLOAP4qewClU4z0+lMB3zluyDNBU5LMee1Sy0NupOFHcVWYYjX1Y0sj7m/GkkK8Z4A4prRCepC2S4qeIZcAVF1fj0qeEAI7HrjApsSHA7nJ9BWzavttAMYJJNYqcnH944rXhAxFGOuORWc9jamrs2NGsTcShyMgV6BpdisYVcDgZNYvhyyEVojkAE8111jFtjBPU1505XZ6UY2RbiOBjbTnlRRzxUiphfelZeOgNTZkXVzLnnRycE1Tkh8442ufYVu+Wo/hH5U4KBzgClYrmRh2+kSE7tgjBrWtLGO3HHLdzU+efanjoTVJESk2KRimk0pNMzk0NkojuGwhx2rkPE74t2OeDXV3QzGR0ri/FTkREDp3pdTaK0OFnOWNJb485c+tK65bFKicjFdHQlo6/TrcFUbtWyiuo/oOKwdEuuEib866q2VWIDDtwaybCxS+0NEf3mfypJL9GGNwrYNqB1AINJ9gtmb5ol/KoZSOWu5YpFYHBz1rHuEJ4jjYkjrivQ/sVqq4WJR+FVpraMOflwPShOwzzj+x55/mdeM9DSvpqxLtAOfpXaXaooPABrBvyv/ANetFNkOKOauF8rIasqbBJxWxfEHPrWPJXREwkiA8CormP8AdB1yfWpJDyoqZUDKUI4YVqnYxkrox8U4U6VPLcqe1Mrc5bWENJmlIpppolhRiilFAgxzUsvMatUVSE5jC/jQMt2xzEB6U9e9RWx+U1Kv32pDJhS00UtIYtJRRQAUUUUAFFFFABSUUUAFFFFAgpKKKACkopKYBRRSUAFJS0lACGkpTSUCFooooGLRRRQAUUUUAFFFFAC0UlFAC0UlLQAUUUUALRRRQAtFFFABRS0UAFFFLSASilooGFLSUtAC0GkpaAERefr1qOSUEyeg4FPLeUpbuapucRnPUmo3L2QwHPPfNNlOWx2FKtM6mrI6D17mpVOI8e9RDtUrDbhaTKQ+IHzUH41uaevnXqDFYkX+vJ7A8V1Hh+33ajGpxk46+lY1nZHVh1eR6BZxeXDBEBglcmuit14GO1YtsmblR2Ardtxtzk9a81as9GekS0tOK5pI+RTnOBW1jjb1IynPWo5Hx0pJJsHiq4+d8VDZtGPVlmPLnFTdOKbEAqjuaVjzT6Gbd2ITxUanmlZuKRBmkiktCrevhDg1w3iSTfGfUiu11HtXEa3EX3ZGeOBSXxGy+E5JhhjT065ocfMaYrfMK2uKxtaa+CP0rstMnJUZ61xFixDAiur0+TCr2rKTHY6qPa6epxQ8X54qtay7gO1W2bINArFZsKDk8VUncnJA/D1q1L09TnpVC4YKh9qgqxk38nI9652/l2qQfwrZv24LE81zWoOz53E8CtYiexlXMhLEVScZqxMQfrVcjIrpRzNFWUfOtXIU8xMVVuBhlq/pw3HFU3oSkZepWzxkOehqkq12dzpYntHdhk7ciuQZCG2Y5rSnPmRzVYWdyPFMIqRhtBzTAc9a2RhIbRTiKTBFMkKf/DTOtP8A4KALEBwKnjGST6mqqHbirkI+QUhklFFFIYUUUUAFJS0lABRRRQAUlFFAgoopKYC0lFFACUUUUAJRRRQAlFFJQIKSlptADqWkpaBhRRRQAUUtFABSUUUAFLRRQAlLRRQAUUUUALRSUtABS0lLQAUtJRSAWikpaAFooooGLRRRQAUvABPekoxmhgiK4JO1T1brVaVt3A6CpWYvIznsKgIyalFMQ8J9abSydcelNqkJksfDBvenk5fNNjHBPoKUDgmkUiSE459eTXa+FkWXVEPbyxk/zrilHB/Ku18H4M0DZ5IKkemK5q/wnZhtGehacu+d5COM8VsKcVmaYP3bH3rSBrz0ds9SwHx0qOSXioy/GBULsTxVuRnGGoSSU2OT5qhbcx9BSCVYhzwKi5vbQ0Vm96UNvPPSsc6ivmbVPJrWtstHubimncylHlVyRgOMU5eB9KbkNgjoad0FWjJmbqTdK5TVsFXP94YH5V0+osD3+72rktam3ZC8cGp6m62OQu22KzAdDVJZWNX7hN4b3qnEnzYIroTViGnc0NOuCHAJrsNOkDqOeK4hR5Mg7VvaXfYwCcVlM1S0O1gm2rgGr8c+4DtWHaXCsoxWlG/HtWdwsTzSLjPes67cBS3WrDyZJ71n3bgEgEdO9AWMnUHG09cAVy98xDnB6/rXQXxJ3ZPWudvCWY1rAUkZkoyTTAtSuKZW9zCxTuR+8UVe0shZRmqM5zN9Ks2Dj7QnseauXwkQacrHdWMAkjA28EVDe+DLW8Ut5RVuxXg1raIFaNTweK6SGJWA4rmu07ouUUeK614O1LTgZI4zNEPQciubIKtgjBHUGvpGbT45kIKgiuM8R/Dy11DdPbjyJ/Veh+orop4i2kjkqUL6xPIc4NLuPrWpq3hzUdHlIuISUHR1GQay664yUldHJKLi7MUYPsaXHFNFO9BVEkyLvIFXIz8tVolIGe9TpyTipGS0UgooGLSUUUAFFFFABRRSUCCiiigApKWkoAKSlpKYBRRRQAlFLSUAJRRSUCCm0tJQA6lpKKBi0UUUAFFFFABRRS0AFFFFABRRRQAUUUUAFLSUtABS0lLQAUUUtIApaSloGFFFAoAKKWkoAWgnCMaKVhmI/maTGtymx2qR3NRZyfYVK5+UHHWogPlJoGMPJoAywo9adGO9MkmHywk+poYYKr6DJpf4VB6CmjkkmpNCRHRcF+BXW+EriNpAYzkJIP1riZ3wAK6HwVLiWde/DCsq0PcbN6NR86iexac3yMPer26szSzujDeorRzgeleYekPLVEzYHpQSTVWeYqDjsKQ0gmnEanmsa81DOVXr6U2+vTg80uh6e13cCeUEqOgpGmiV2amh6W7EXNx1PQVuXH7mElRx90+wNPjVUQKBgYpWwUIYAg8EGtErI5JScpXK7Tqn3uKia8XHBps1ghBMckg44BbIFUjFJEg8w5I70tS0kUtWvgjkA1zN9L5pJz1rZ1SPd8yc+1c7eZhj5PNCNVqUpIAc9MVBsgiyWYUySQ5OSTVWRixzWqTYNpDpZN8hbp6Cp7Wba4qmATU0QIYVbWhCep2GmXeQvNbsc+4Dn61xVjK0eDXRWlyGUVzyVjQ1Wl4wKo3Tgpjqc08yAjOaqXD8nntxUjsZl5wrZ5GKwrnnPqK2bp+Dk1h3T8mtYCktCi55qMnildsmmPwK6UcrZVbliadHuicOO1NbuagGo4yrJnHQ1rZtaHNzqL1PRfC+oLKqgNz3Fd7ZruArwWy1mS0uVlhYoB1HrXpXh7xebq3DoPNxwwB+YfUVzzpuOp0RqRqbPU9AQDODSyRq4wBWXpuotqiv5aGMoeh61rxjA9+9ZbhJWMDWtLjngYMgOR6V4l4k0xdP1BxGMIT0r6Gu4xJGfpXjnj+z8u5LgcGtqLcZmVWPNBnCU5fvik70+IZevQPNLiDAFSBec9KRVxUmKRQ0c/WloxzS0AFJS0UAJRRRQAlFFFAgooopgFJS0lABRRRQAlFLSUAJRSmm0AFJS02gQGkoNJQA+iiigYUtJRQIWiiigYUUUUAFFFFABS0lLQAUUUUAFLSUUALRSUtABS0lFAC0tJS0gFopKWgBaSiigYoUt0/Gklz5RCj60uafv+QoB97ANJjRUnj8tVXHO3moGHyVbustKzVWYHaKEMiPSngfKKYRlgKnRckZ6CmxIVuCB6U0/LnNOHLFj0HNKkIuCIvMCM3TPSp2Ltcou25ia3vB0m3VWTs0ZrMuNLubZ9syhc9G3Ag1c0SaOy1i2AYMWbax+tKbUoNIdOLjNNntmhAtaIT6VpupwaoaEMWSVqFc15DPWuVGVgD61mX7mNCBWyyVjam2wEkDI55pFx3Mm2sJL+7w2do5NdjZWq20IVQOKzdHh8uFXI+ZvmNbG8BeTimiajbHhqOtUrnVbO2/1k6A/WqTeKdMU/68H2FURySfQ2Cvaori2DrVCLxJZyMCjA1bXVraYcnFVZByzXQzLjSg+Tg1jaloi+WWAya6uW9tkQsZBisW/wBYslQgyqfpUmiucFeWLRuVxVFrYiuku9SsZJDg/jis6S4s2JwwrRNjcbmX5RHUU9ExVpmhb7rAU0KpbCkGncVh8JxWzZS8CscLV20Yqah6lI30csPu8etVrrP+NT6d++RlbnFLdRfIexHNZlJnO30m0Gqem6Nfa/ffZ7OPIB/eSn7qD3/wrp9O8J3OuTq8hMFoG+aTHzP7L/jXeWljbaVaraafAkaIP8k+prWOiMKlRbIx9H8F6ZpVuq+Ss0+Pmldck/4VPd+GrG7QpJbRMv8AuitGRbw8rOB/wEUJ9ux8zRt77cUzG7OM1D4Z6fcq3kF7ct3Q8flXKX3wk1GAk2t7HKPR1KmvXz9rHTyx+FRSSXg/5ZxN+BFXGpKOzM5QjLc+ftR8I63pmTPZOyD+OP5hVfRbm4sr/fBI0TgHP/1xXtXiTXv7KtMf2cJrqQfIgb5fqfb+dcxawWPiSFnu9OWyuwPvIOD+P9K29u3H3kZKilK8Tp/h7qD6roYvZYgkhYocdGx3FdSTtNeeaXrsPg2wGlx20t6Uc4KEKBk55JrqLHX4NWtxNBuU7tjox5U/1+tYO3Q6Fd7mzLyv4V5v4/sxLCXA5FehmUbOtcb4wQSWr/SpTs0NI8WcbXI9KmtUy+aLtNl0496ntkwma9RO6PLas7EwGKdSAUo4oAKKKKACiikoAKKKSgQtFJS0AJRS0lABRRRTASilpKACkpTSUAIaQ0tIaAEpKWkNAhDSUtJQA6loooGFFFLQISloooGFFFFABRRRQAtFJS0AFFFFABRRRQAUtJS0AFFFFACiiiigBaWkpaQBRRRQMWnRLukUfjTafEPvMOwoAY43c96ryjA6VZ7UxxuU8c0hopKpeUAVY2bWCk9OvvTG4GRwRT4ufmbk4NDGhj9lFQzHLfSp8dWPpUEg+ahDexE8jtwzk49TRDJ5U6Sf3WBpGFNquhnd3Pobw1KtxpEEynIZARWz2rifhhqIvPDghZsvbttP07V22a8ea5ZNHsRlzRTGkcVz2uqVR66TFY2rw+dhR3NZM1pvUElkgtBMFJG3PArjNc8WagWkjtYZOO5UgV6TbwobVUxxjFYOraYMsVQH8K1iktyoPmbXU8t0i4v9c1J4rmdwR1APTmvU9M8IWf2KYSJufIIJ6jiuEv8ATLvSNWGqabCGL/JLGw4H+1XqulX0dzFuU9UG70BxzW1Szs4nM3UhozMh8LWkcIk8nC55PpSDw+jhjHNKpA+ULzz711iBfI29ttJaKtvCMKCTzzRZCeJlZnmupadqO4oHJ5wBjk1lXfhrVEhMkgPAzjPSvVRbRyX6SMoO0E9KjvLZXRvlFZa2ua/WNUjxYaRPIxUkkj0qtLp7RzbASD3Ga9CitIIBPHj955zdf7vYVzGsxC21IuBwyU1O7Nee7OduEeKQIrYOKpHU5bdyH+YA9utT3t4gnOT2qnDp1zfvuZCqE5+tdMErXkc85ybtDc27G+W5QMp3fzroLCPzccVkafpSWm1jj6V0umohnTaMLXPU5b6HRHmt725e0m3ZLqVe2wH9a37HRVnk866XMeflQ9/rTtK09ULTSL94jArY83HA7VnFdzKpN7IlGyJAqqAAMACmrGQDnqetLEm75m/CnSNtU1qcnWxC8ip0Us3oKi8+4P3YkH1OakROMnrUgAFLUvREOblxyyL9FqJ7R5T880h+hxV8YpcCnyk81jKl0a1lJMsQfOM7uc46U0aRbINqxhR6CtMOGk2Lz60OVU46k9BSsVzMyJNJtzyYEJ91qAWEUTZWFV/3Ritwr3PHtUEiBqVik7mYbSOReCyn2Y1yPicT2i4kdpYm+96gV2so2dOlcz4nC3FjImMnFC3GeV6zpLQyx3McgmglGQ69vrUCqFUCrrXDxK9s3KZ4HoaSaGF4Vnh4OPmXPQ16EJaWZxVIXd0VaKKK1MAooooASiiigApKKKBBRRRQAUUUUwCikooAKKSigApKM0UAJSGlpKBCUhpaSgBKSlpKAJKSiigBaWkpaACiiloGJRRRQAUUUUALRSUtABRRRQAUUUUAFLSUtABRRRQAUtJS0gFooooGLRRRQAU8HAI9RTKeoyjnPTFACAfypo604dBTe9AEU8ff+E0+GMBSeoxTjzSjjp0qWWtWV5WAXnrUDfNVieMhgD35FQlMChAV2HNNp7daaatGbO1+F+sfYPEBs5GAiu1xz/eHSvZz1r5nt55LW5juImKvGwZSPUV9B+G9Zi13RLe9jYEsuHHow61wYqGvMd+GndcrNfqKrTQ7nB9KsKaGHPNcTOtOzFjOF4pk0YcH1qULgUjCrJTs7mFdWWcnaPyqCGa4sonijA8t+qkVuSJuFVXiUdVDD0NCZ1KSkrSQieI5Air9nBYDBOetTt4phjiHmWs27HO0A1QltIiN6PtNQtEG+VsFs9RV+8ZujSZYk8ZxxyZi065ckY+bAFZd/wCNr4kxx6ZhT3LHipZLcKwGeTUEseAanUpUKW5hXGvak9yXi08Fn6k5wKzNQstT1iVZLiRYQoxhPSuilGCcfjVaRjyRxVJ22K9nDqY0Og2luqll8yUHln549qtiOOP7qjIqSQseg601U6Z60OTYaLYFB6tXX+GtL3RC7lHB+4D/ADrnbCwe/vEhHCZy59q9CiRYYFjQBVUYAqdzObdhzOsannFJajzpCOoHU1RvbgRoxbt2rT0uA29mof77fM31PamlqYz92JdwFFQt8747CiWTFOjGBk9a0epzJWVxGwqnNZ1tqCPcywFvmXkCrV3KFB5rhdavZNO1aK+iPyg4kHqKzk9UdVGnzJ3O788VDdX6wRMzNjArnotft7qESQTKykcENWXqOuwPPDbPOgaWRV27hkjPPFJyeyLjRV9TsLCRobETSk+ZN85z2B6Crtupx5j/AHj+lZ6yiV1XjaKt+aXIjQ8n9KEzKcSaRlJ27jn2qjNM0MwQnINaCxqi4HXuaqXMIYZxk+tW0ZwaKk77krldaJAPcdxXSTnYhB6Cue1XEiZHI70ijzPU08u7f61UViOhxmtXXIilyT61kV2x1RzT0kOFLSCit1scstxaSiimIKKKKAEopaSgQUlLSUAFFFFMBKKKSgAozRRQAlFFFAhKSlpKACkopKACkopKAJaSlooGJS0UUCFooooGLRRRQAYoozRQAUUUUAFFJS0AFFFFABS0lLQAUtJS0AFFFFABS0lLSGFLRRQAUoOM+9JRQAo6UHrQPSlI4zQMbTk5bHrTaAcGk9QTsxZl+eP8qY8XOKmmGQjD05pr8sD6moTNWtTNcYNRkVbuY8MarEVaZm0R123w38T/ANkap/Z9y+LW7OASeEfsa4mlBIIIOCOhFE4qSsxQk4Suj6bBzgjmpRyK8/8Ah14v/tWzGmXsmbuAfIxP+sX/ABrvYnycV5U4OLsz1FJTjdEw6U1hS0NzSEQstQyR5q3tppTNKxopWMmaBiOBzVYwunROcdc1uNDUL2xP40rM1U0YMgYjO0kj3qu6y9l/Wt42ZGTjrUb23bFLUpSObkt5DknAqJrfrxXQS2vXiqU1vjmgdzFlixjApIrdpOcd60jb7+3etnw/piy3XmsuUh56dTVxXM7ESkoq7LOlaLHp1sJJFzcSDn/ZHpU9xcCNCKsXlxtDOeB0FczfX2VbnA9a0m0tEFKDlqy3ZE6lqyr1ji+d/wCgrpmfYOvNc/4OAlsZbnqZJSM+w4rXvWwp5xipW1zKr71Tl7DjKHmVBz61bL7VrC0aR5ry6MjbvLKqv0PNXNQuJokPlgHHY0KWlyZU/e5UVtUudik5rg9d1COG1nuJiCiKePU9hWhquvEOyzRumM5PUV534o16PUiltakmFDuZsY3H/CinB1J+RvUksPTu9zAEsgJ2uygnOAcULK6SrIrsHU5DZ5BptBr1rHhXZ6h4d+JFo8KRarmCdRtMmMo3v7V6HoF5DqML3VvKsqE7QytketfNor2P4M3AfQb23yMxXO7Hsyj/AAriq0Ix95HbDESmuWR6R1qCdeD2qxUci8VlbQcXqYl4Mg1zF++0MB+Vdddx8HNcnrERUkjipLucXr6btrda56uj1Ul42U9q51hg1009jGe4lLQvSiulbHLLcKKKKYgooooEJRRRQAUUUUwCkpaSgBKKWkoASkpaSgApKWkoEFNpaSgBDSGlpKYCUlLSUATUUUUgCiiigBaKKKBhRRRQAUtJS0AFFFFABRRRQAUUUtACUtFFABS0lLQAUUUUhhSiiigBaKKWgAoqzb6bfXfNvaTSj1VCRVseGtaLqn9mz7m6fLSuh2Zljg08/dI9K1z4R15Tzp0n5ioZ/D2r24LSWEwA5PGaTaGjKzzRUkkZU8gg9wRUeaEwaJUw0ZB69qSaI7AenFJHU0jBwB+FS9zSL0Kj/MmSKqFeTV3bjcvpVYr83FCYSRUYYpKmKEnFRshWtEzFoktLuexuo7q2kMcsTblYV7d4O8WweIrAFiI7yIYljz+o9q8Lrpvh9K0XimHa2NykH3rGvBSjfsbUJuMrdz3qNt60/HFUIJSuM9KvqwYfWvPR3sbg5pyrxSGnLTQmw2+lMYY71J07VGxpsEQyVWkLA+1Wm6VXmGVwOtQzeJUn5wM1SkILbR1q5IOPpVV9qZz96pNCFVAOfzq3Frj2VslrA6xAsfMfHJzWVd3ojQ7TzWHdXjOG3H6U4trYORS3OnvdS3KRuyMetc1qV6ADucAenc1mPNKeA7AfWs+6mC5LN9SaaV2bc3Kj1bwP/wAi3A5GDIzt+G41oanJtU4qh4LSeLwtYGdQu+LcuP7pJIz74qbU3yCtaSVonHBc1S5keHr4x+Irm3Y4E0e5fqv/ANY10l6MoT7V57c3y6Zrtrec4jf58eh4NegznzbcNntURWhtVilUTOF1y3LMTwQTivJLmJobmSJvvI5U/nXterxfK3cV5F4hi8rW7kYwGbcPxFdGEdpNGGPjenGRl0tFLXeeMJXtHwd09rfw5cXrcfa5/l+ijH8ya8egtJ7o4hiLH1r6R8NaYmj+HrCwQf6mFQ3uxGSfzJrmryVuU6KUWtWao6Uj0tMeufobLcoXi965nV48q1dRcDrWFqUQZTmoNDzbVxtciuelHzGuo16LDtxXMSjk10U2ZTGr0opF6UtdS2OR7hRRRTEFFFFABSUtJQIKSlpKACiiimAUlFFACUlLSUAJSUtJQAlFFJQIKSikoAM0lFJTAnopKWkAUUUUDClpKKAFpaSigBaKSloAKKKKACiiigApaSloAKKKKAClpKWkAUUUtAwpansrC71G4EFnbvPIeyDP/wCqvQfD3womm2zazNsXr5MR/mf8KlySGk2ecKpYhVBYnsBmuo8JeF7nUdWie8tJUtU+Zi6EBvQV6/p/hbRdKA+y2MSEfxbcn860ngj2FVUAVm5lqBUhs7a2hRY4kVQOMDFWPIidchRke1Z0t0LUmGQnGflNXreYNGCoPSs7mlgOxhyoyKYY4ZBgoCDx0qlP9pSdmXGw0yyuXfdnoppXHYoa54LsNVjY+Qsb9mUYrx/xNoU/h6+MMjB0P3WFfQqyBgCa87+JehtdQG7UDK1UZWYmr6HkyXB3batF1K5z2qg8MsDHepX0yKkRwygZrZma7FpSr/MD25qB15ptvlHZCcg9KlI3CpejLWqIXjz061HwRtYc1IxKMM9DU9nptxqdytvaxF3buOg+tVcloz3jArZ8GuYvFFofVsVNqHh280UgzNG5I6Y6VX8Os48SWfygfvR0pSd4MIq0ke8RrlB71LFJ5Z2t07U225iH0p8keR715aPSJw4IpQ/51S8xo+D0p4nU9DVJhy3LTSDb1qAsM9ageYevNRG5A68UnIpRsWjIPrUMsgAqq94oP3hVSa9wcqeO9TctIlmmCqQTWTeXIBODk0l3dliAOh71lTys54oLRFdTmRyc9qpspc96siEty3AqOd9kZEK729aZZn31wlrHgnLHoKwzFNfP82cHoorQntpJJS0mST61u+H9LRm3OuT2raL5RPXVnq9tbrbaPaQjjy4lQfgorAvph5xB6Vt6jdxW0UMRkHmbNxXPQGuOv7svNiPJJPGKK0tbGWEg7OTMDWbWe7un8hd5T5se1enSHNtFLtwJIgfxxWPpOimC3aS4X99LywP8I7Ctq42x6UrOwVI/lBJ6+1KF+VirSTmmvQ5jU2DFgeleU+M0X+3MJyfKXIHrXperXUaMzlvlHp3+lYdl4dW6vJNTuIvmkORu5xSoz5ZcxriafPTUThrHwzfXih2XyUPduv5Vs23he2tvmmbzW9+n5V0t5cRW7eRCu9/QVb03Qbq8YSTAqp7VpKvKRhDD06avYzNN0pWljEcYChh0HvXrkfQfSsKw0eG1A+XLCtuM4rOLuyKzuSk1G1PzxUbcVoznRVnHBrH1BfkNa9yTg1j3h+Q5qCzg/EEeN1cfMPmNdprpyGrjJvvmtqZEyEUtIKM12LY4pbi0UZozTEFFFFABSUUUAFJS0lAgpKWkpgFJRSUAFIaWkNACUlLSUCCkNFJQAUlBpKYBSUUUATUUUUgClpKWgAooooGFLSUtABS0UUAFFFFACUtFFABS0lLQAUtJSgZpAFFaml6Df6qv+i2zyEng4wB+NdVp3wq1CZQ97Osef4U5P51LkkUotnBVs+HPDN74jvRFbrshUjzJiOFHt6mvRrD4aaVaENcwtc/77f0rq7GysdOhENtCsKDsBjFQ59ilDuJ4f8OafoNitvaRAH+Jz95j6k1rkccGqZlC8q3606OUuOGrI1sWNhNLjaMVHG7A4NSht/4UgM+/sFnUN1YHINSWxDIEACkdat4Heq0sWxg68H2oGR3EXqK5e9nl03UVVSdkziuwJEkQYjmsTXLH7RbMyoPMT5lpPUEbUcQeBSeuOtY2raU18B5rZiTnae9XNCv/ALbp69mX5WHoan1GB5rcxqdu70o6B1PGfF9kt1eeVaxjbGPmbtXGiEpKyntXvj+G7dbJ/wB2GdhySK8yu/DLm8nwuAGOMVUZ23G4JnIRw5uRuOBmuktdEhuIiYydxGakg8NvJ8+OldHomisH2MTgU3NMFCzOVvfDji3EkSsw7jGa29B1bRdEtFSSNo5sfNkc13en2kVlLskUFJOmRxmnazoul3tuTNaxlgOGxzUuY7ankHiXWjqd83kMzR5+XNO8OaNcDV7SaQFfnDYrYh0GC48SBIEAihGW9K6PTbINq7Pj5Y+BWc61lZG0aWt2dlaD92v0qyRkVBafcq1iuY0bKzx5qlPARnaSp9q1GX8qieMEYIoGmYM/nrnDCqMjz92FdBPbdyMj1FZ01sp6VJomZJd/4nGaieT1bNXJbXBqpLFjtQVcrSMp9SahLAdFxUzqRVdxQVcjck9TSCVBw0YPuOKGBNRlTTQrhL9nbnBB9xW5oCRlgQawTHUltcy2UgkjbHt61QXdj0P+yLa8mM8rSFmHOGxmrNpo1laP5kMWX7M5yRWBoviu2mZYrg+U/TLdDXVJOrgFSCCOoq00YTc9ritHVK9VTH86hlXkA8gVdL5qreqZIio78VTJg3c5GDTW1XVDLIP3MZ+Ve1auo2zpALe3XDNxx2rW060WCLgcmrQtlL7iMn1qLGrq6nOaR4Whgfzp13yHkk10QhVFCqoAFTbcDimP6dzTtYyc3JjUXJz2qZRimKMU8nAppEN3FJxUbtmgljTMc9apsEivNk5rKvVOw9a2JRisu8yVPHNQUzhNaQnIrjrpcTMK9A1S23Mf1ritThEchrWmyJrQyu5opT1ptdsdjhluLRSUVRIuaSiigQtFJRTAKSiigApKWkoAKSiigBKDRRQISkpaSgBDSUtJQAlJS0lMBKKKSgCalpKWkMKWkpaACiiigApaKKACiiigBaKSloAKKWigBKWjFaOi6He67era2cZY/wATkfKg96TdhlO2tpruZYbeJpJG6Koya9J8KfDZSi3GsqGbOREDwB711HhfwVZeHog23zZ2HzyMOT9PQV0xG1cKBisZTuaKJFb2drZxKkEKRqowAowKnDqenFMPK8VE+QOKzNCyMMD3pkkasCCM1VSZkJyasRXCsOcZpDIHtQ65UEGqxWe37EitfPTGKR4gw+YZoEZ8d4shCng1Yjkw3Wqd7aYG6MYYelVYLxkbZLwfWlcqxvqyuODzSOuV6ZqvaTK3cc1cHTNMl6EEQ2nDdDUd1CGFSMTu/GpJF3LQHU5KzmOl681vnEczZH1rq3w/OeMVzOpWofUxIOsXzA10FvIHgTbzkdalFSJGUeWwxxisG40ZROW2jD9a6IpkAVG6F/lYfQ02hJnNNo8cP7wRjnqPWpLfTvI+YDknNboh3tg87aSS3I6c0rFXKD2yyx7XGO4PpWLrE7W1pIkpIZRwfWulMZHP5iuZ8VqWgjiHSSQLUTdkXTV2UfD+meRYPdSD95LliTV+xtwhLgfeNXltpIrER7sqFx0pyQhIFA9K5HudfQs2vSrg5FUrWrimrRlIUio2GPpUhpDTEmQMOOKqTRxkHcmD7VdZc8jg1BIPUYpWLTMuWBOzEVQnthz81bMkanPIqnNEPrU2KTMOWAD1NVmh9q2ZIuecVVaHceFzQVczDD7U0xe3Nawsi3LcCke3CjgYphcx2hbvxUDRY961pYcdqqyxYFUFzKdPar2meItQ0pwqv5sPdHPT6GopY6qSJjPFMGeh6V4nstSAVX8uXvG3B/D1rWZw69a8f5DBlJBB4I7V0ejeLJLcrBfsXQcLL3H1osybHosP3BUw6VnWF5FcxB43DKeQQetXg3FWmYSWpJ2qFv8AWfhUhPy/hULnD0MIrUkBp2RUeaVTQmDQ5jULZ7VMTmo2x6UNjiQMSev51TuYlwT1q6eKhmQMpNTco5fUbZWVjjH0ridbiSLO1efWvQtQXajcVw2vx5z9KqD1CS0OSfrTKldDv2gc1JHYzScldo969CLVjz5p8xWpK1YtGZsbn6+lWF0WJBl9xPpRzoXIzCorbks4o/uwgfWqzBVP3AKOdByMzelLV1sY5UVA0asMrwfSmpCcGQUUMCDg0lWQFIaWkoAKSlpKACkoooEFNpaSgBKKKSgApKWkpgJSUtIaBE1LSUUihaWkooAWlpKKAFooooAKWiigAoopaAClxQK6Twj4RuPEd6jOrJZK37xx1b2FS3YaVyv4Z8K3niO8VIwY7ZT+8lI6D0Hqa9t0TQbLQ7NLe2hCBRye5PqasaZpVppNqlvaxBEQYAAq6cHkVjKVzaMbCHpkGozJt69KkKZXiqzBiSBzUFEvXlT1pfLGMdTUSEo3zMB9KnEqjkUhkEsCjLH07VSMkcbZXPXmtGT5wR2rMuYTGxbqPSkxov2t5G+FHFXCe9c2shgkBrXtrrzEGOpoTBosuNy1k39mcblHNa5469KjlUOo4oeoloYljemKXy3GK3Y5fMQGsLUbUxvvUY+lT6XfbhsY/MKlPoU1fU1ZPvipsfIOaib95g+lP6ofY1RBnPAHnkYjqCKh0a5DF7djzGxFaCD5GNYFpJ5Guug6PyKnYvdHUntxSMcD1pOTgilYcgVZmEa4XJ6mlI4NPAwMU16fQV7sqSgDPY1x+vz+drlhaZ537iK7C5wEJJ4Fedtd/bfHiKOREMVz1DsorW53DRl4tijJxUQTCgVaVzDlx2FQ/eXd681g1qWmyOMbWqypqEDnNSoaaBknakopCKZAGo2Cng5pxJzTWPFBRBJFEc1We3j5OTVphntUbLSKKDwRjtmo9gzwtXTGKTysUhlJozj1qB4c81pNH+NV5VoGZk0Q7VSlT2rVlTg1QnXvQMy5kqjKtac44qhKOTVIZSdaYyZFWCuaURZqkxMbput3miXKyQOWiB+eInhh3+lep6ZqMGo2kd1bvvjkGR7ex968ju4NvNX/AAxr0miX22Qk2kpxIv8AdP8AeFX0M2j1rdkYprHdg1XiuUmjV0cMCMgg8EU9XydtQ2JIlPy0wyMThfzpwPmHHYdacUA6VI7pAvAyxzSlhjim4YnjpUiR7c5pol2IWU+lQzKQpycVccgDiqkwJFDGncxdRXcOMkVxeuxAk8ewrvbqLcDXKa1a5DNjmnHRjOBbEV2jY4VxmtW8kXcUX8KzdQiMcrZGK1rG1WeGORjuZ1zn+7XWnoc0lqTWzoIVVuWHWlmuOMIuPUmpWiVI9vAHr61UlRt/IxgdKCSKWTA6596zrg/N0q7IdoI61QkBMnWmgZHjNJtz25p4XFA++R7VVybEDoCOagZdpq2FzmmOm5SCKuMrGcolWkpWBU4NJWpkJRRSUAFJS0lAgpKKKAEpKWkpgJRRSUAFJRSUCJ6KWikUFFFFABS0UUAFKKSloAWlpKWgApaSug8JeFrjxLqIjAZLWM5lkA/Qe9Juw1qTeD/B9x4kuw7qyWcZ+d/73sK9u03TbXS7RLe3jVEQYAApdM0y10qzjtbWMRxoMAAVbwDwawlK5slYTGKUc9qRgR0NIrEn0HrUFEgXIxUbqMEDinhudooKDtxSAyLgMkm7k4PIpYrkM4X17VauYN+axLtntphIuflPNSWtToM4HFQ3CB0NNtLqO4jDAjkVMRuyMUxGLexFVHtTtOuCsgB6VevbfdEeeaxSTDIMcGpejKWqOqVvMApwGODVGxnBjBL1ocNzVIh6Fa5iWVCCK5+dTY3e4dM105OTgVm6haB0zj8aTRUWTWlyssY+ari8o3Haufs5jbS+WRxmtu3l3nrnihMUkGNkZHNctqLm31eCUcAnFdZcHZGa4/xIzIkc391+KUhxOxtn8yFW9RUi8tmqOlyF9PjbuVFX1GAKpEMfgVG9SVDIePeqZMdzK1u48qylYHCqpya828HlrzxLLcNzya7jxjKsGhzszYG3A96474eRg3jvXNPc76WkGejuP3ZHtUUPMQqyRkfhUFuP3RHoTWbWok9AxQDinMKZ3pDJAaCaQGjNMVgzTDzSlsU3NAxpFM2+ppzGm5oAQpTSuM96eKDQMgZfWoJF6+lW2Xiq7j1pMZQmXj0FZ9wMVpz9D61mz80ijNnHNUpVyeKvTjJqIQ5OTVDKYiqVIhVjyucY6UoSgRm3seV6Vl+XjJPauiuIR5fI5rGvEMcQUcM5xVJiL/hnxBeWMwgbMtszcJ3T6f4V6HHOHwQecVw3hfShNdhmX5YxuNdgU/0yNFyoIPSr5bq6MpSSdjZiOUB9RzUtVLZmUCNuoqyKz8gZIuKXOaYOtPxTRDGsvFV5F4qyajcUMqLM2dOtZF9ah1Py9a35V68Vm3KkZpFHmXiOyETFh61L4cxJp/qyMVI/lWh4tjGwt0NYvhefbc3FsTgOocfUdf510wd4mU1qat0nlLuPQ9fas+d8qrZycYNXryQFGU8jHPNZQb90R1GeKoghck81XbHpVoRM7AdjTxZMQcCqRLKG1j0FJGh80961BZ7CCePaoJrcrIJI+TnJWmSU8HHTvTCmVyKsOfmLKMj07ioi/A9T19qoRVkj3jnrVVlKnBrTKDHbNVp4dwOOoqoysZyjcp5pKU8GkrUzCkpaSgQUlLSUAJRRSUwCkpaSgBDSUtJQIsUUUtIoSloooAKKWigAoopaACloqzYWM+pXsVpbIXllbCgCkBb8P6DdeIdSSztlIHWSTHCL6173oOiWug6ZHZ2yYVRye7H1NU/Cfhi28OaWkMahpW5kkxyxrfBFYSlc2irCE+3NJx3pcgGhlBGT26VBYmOOaYzZB7UOxxx1powwJHB70hjlPNSZI9xVYsw5xzUsbZ60gaHOm4ZFZOo2vmQs2MEVtAY57VBPHvB3DI9KGgT1OX0y5EEphkbAHSujt5BIo28Y7muV1aJYL0XC/Lt6gVt6TfpPCMdSKmL6FyXU05FULk81galGHfOMYNbrjcv8qzbyPc3A6imxRK9hcrHhfStpLncoIGa5fmOatayucwn1BqUxyRrhiTkDGaZKqsMNmlRtyA96djNWQY93bDcWUVJp8+GUMeQcGrk8WVOazkjIuRgd6nZlbo1L1vlA9a5XxGubI98EYrqbo5xz0HSub18EWMregzilIcDX0CQy2cXPCqK2h61geFQRpMRb7zDJrfXpVx2M57jutQuMsTUx4BqGTiM4602TE8/+JF7iyS3U/ebpVD4ex/vHao/iHJvv4Yh2HNaXgO32Ql/WuWTPSirUztwOKgg+WSRferIHFVR8t4w9RSe6MI63JGHNMZamIyKYRxQ0UmR9KTNPxSFeKkq5EetJTyDTaYyNwccU0AipiM03bQA0Cl7+tLs5zS7cCgCJskGq0zYq05qpM6jpSY0UpsnPas+YZPHWr0xznnAqq4yeFpDKRjDHFJsC9uBVvyu56VGyigZW2En0p6RKO3NPI61IiNxx+NAWKs6AdaxzGLu+aUD92nyrW7fRmOA46nrT9H0rzpIo8cE7m+lOO4OyVzX0GwNtp4fbiSTk59KuFG+2w56ZNXygUBQcADAAqvtxdxdxnNddrKxxN3dycLtnJyeanFRSkiTgHrzxUqc4rGa1NIP3SRVzUm2kTFOoS0Jb1GNxUTc1KwqNzgUmVErOAc1n3a5zV+Q8VSuOFNQaHD+Jk3RnNcdp0pttXiZeMsVP413HiQZiJrgJTsu0bphwf1ropbEVNjobglyUX7x60yy06S5ynQ1v6domXEr8jrWhLZRxuWiABPUetaGLZhf2SkP3ySQKGiVeVGK1C3zFJVy3fPaqc6MvRcqemO9MRmShTxg5qnKu3rn/ABrTOSpbYVH61WlXcPUUxGXJGGHTB7EVVZRysnyt2YdDWlIvX+dVZY1bIbpVEsz23I2CcGgM3eppItnXlD37ionjMeMHKnoRVElWePksKhq4y55qrImxsdu1aRZnJDKSlpKogKTNFJTAWkpM0ZoAKKKQ0AFJRSUCLNLSUUih1FJS0AFFFFAC0UUooAVQWIVQSScADvXtPw88GjRrEX15GPts4ycj/Vr6f41y/wAMvCI1C4GsXsf7mFv3Ckfeb+99BXsIAVcDoKxnLoaRXURRjNO470mMUmOc9qyNAIGc/lTWPFBfqCKaTjtkCkMYTzg0ikBiuOvelc45H4VEj5UknBBpFD24PuKWNuc9KXAI54qMqXOB8q/zoAtq27oeKSQ5U1HCyr8o7VKQCD60yNmc5rdqroxx1FYmhXj2900BOMHiuu1CLfC3y5Irg7rdaaurjjnms3ozeOqPQYphIo4qG5TjOM81S0q68xRk9ula5j3L61e5nsc3ewFZQ3Si0lMble5FaGpQbsHFZajY4NZvRmi1R0Vo5Kru5OOatjr7Vmae4Yc1qAZxWiMmRSDJAAqskJ+0q3AGausRnbUcYzP9KAvoQ3fy5NYOtAGwkB9K371dw465rn9XO60m4xhaiRcC14Vffp8fsK6QVx/gmfdbFD2Ndj2q47ET3EY/rUcxwtP/AIqilOcgimyY7nlnjg+ZrwXsFrpvCcHlWS8YyK57xFCLjxX5Y5HFdnpsIt7ZFHHFcbep6b/hpGoDxVaU4u19CKkD1FOf3kbd80N6HPFalkDikZaUcilxVkEVBp7DFN61JdyI0hFSEUw0ixNvtQVp3JFOFMVyPaTSFGxU1MfpSBMqSKAOtU5RyTnmrkvNVymaRZRcA84zURSrpjzyKYY8GkNFMxZPsKgaP5iQPwrSMHGW49qY0YzhRQUilHB3ap0QDLY4FWlg45FNlRQpU8ActSAyZ4jNMsZydx3Gum0ez8iEybcFuAfasuwtjPc7sZLHj6V1BXYoRRgAYralHqY1pWViuV565qFxi4gJP8RqeRHAGwhfXIpmD5sBbBwxFbnKWJhjPHWmpU0iqxwaiTkis6hpDZk4HAo70o6UYpWEMNRPzUrVE1SzSJUkzzVKc+tXpelULnoag0RyviH5ojivOr3iRj6V6RrXMLd686v1xKwraiRU2PXrZkk0+3lAwJIlOAPUCo5IzjOMDFReHpvtHhrTpAct5Cg/hx/SrMu5ckt0rY5zPuIQydMN1Dd6oFjgqRn6d6vuGfdk8jkA9xVR4+cjJGecdqAMmWXJYbCozg5PINVJ2lRtrKCT6Vo3MWMTL84Aw5HcetV54l8sSMcBehHpTuFjIkaUEqQB/Wq0jN1xkmtGaF/ux4Jweoqm8RYZYH1yOKtElNieVJyPeo+i+qHt6VZeP5d3zFl60wKp/hIz1FMkrFce4PSmSxCRcdDVjbt+Qn5W6GmlSCQeop3E0ZbqUYhuKbWjNAJF9+xrPdCjFW61qncxasNpKWkqhBSUtJQAUlFJQIWkopKALVLSUtIoKWkpaACiiloAK2vC3h2fxJrMdnGGEI+aeQfwr/iayre3luriO3gQySysFRR3Jr33wb4Yj8NaRHDgNcSDdM/95v8AAVEpWKirm3YWUGnWUVrbxhI4lCqo7AVOfSkYnOKZnb948elYGxIB+VIx5xRuyOKaTg1ICEUmDtIJoyef0pQdwoKEZcqKquFR8twDVw8LULxgZZuTSBDUO8DcuBngUTMAOBzURkYoQvFCneo3de9AwjbawyeTV9OVrNZufccVbtJPMTihCYk6Enk4XpiuI8UWuyZZV45rvXUEYNYGv6f9otpB3AzUyRcHqY+iXmSo644NdjBKrIMdT6V5paXTQzbEzkHnHWu50e4UwqGPNEWOaL91EHXk1zV4XhnYICQD3rqpiGjPqBXOXakSbvU80pCgT6XOzOAT+FdAGGyuUtZWjuBiultWLoCe9OL0FNEu0bt1LGMMTil2cUqjCmrIKtycg9q5zWSTaygddtdFc1gaquLWX02ms5GsSr4F+ZJPY12/auJ8BcRSn/artc5XNVHYipuC9yailIKnFT9FqCX7h4qmRHc898n7T4ylBH3a7AJtUD0rmNPA/wCEzuh7V1pSuOx6EnoiPNQXbbVQ/wC0KsFcVWu0zFn0IqXewla5fRsqPpTx0qBDhRUgNapmLQ4imEYp+QaQihiRG1NIqRhTMVJomAFOApVWlPTinYlsQjimMM089KawNJjRVkXJPpUJTPGKtlOeaQqM0jQpmI+mBSGIA9M1ZcdaZtyKRSKzKSKQRgdRU4XJoK/NikURsyxxlu9UJiZXEK8k8uanuXLSiOPlh+lLDBsG1eSTyfepvcq1tTQ0i2ChpQPujAq82Op/Gn28KwW6R98c0je3ODXbCNonnzlzSuQna546U1+ZI/lIw/Wptg5Pr+lIyEKnzZw3BqiScqAcnPNVohljVxuMfSq0QwzfU1EyoPRkoFKRQDQTUgRtUL8VKxxUL81DNYlWU1QuSQDV6XJzVCf7pqGao5zWB+7avPNRH74/WvQ9YJ2t6V57qQzOxrWjuTU2PQvAM/neF448/NDK6/rn+tbksbFAD3OR7Vy/wvczWGo268MkiuPoRj+lds0KlMbsnoxrd7nKYzxbQxOWVuwHI9aqOiopdhsPYN9K25WMZwsZODwR/OqFwpJI2ZBHHHX1FAGUSSpRU3L64xWaf3MzQkZA5A9R6fhWvIXb5DhSO/qKzbpTKoUthlOVJpoCjONjYXkEZWqUhUk49M/WrW8zKUwFLHAz2aqEgIIDEhhwapEkDhV5HcVC3GOwqdiePQ+tRvjBzTERSJuj45IqPBZQ3ccGp0O0imFdsmOgamIix7VWuod65HUdKuY55pjj8qaYmrmMeKSrF1FsfI6Gq5rZO5i1YKSikNMQUlFFAhKKKKALVLSUtIoKWiloAKcqlmCqCSTgADrSwwyXEqQwxtJI5wqKMkmvYPBfw8g0tIr/AFJRLeEbgp+7F7D396mUkikrlb4b+B5LKVdY1OPZNj9xEf4Ae5969N29KjRAEA6U4E9BWDdzSwrDvVOTO/Jzirp4FQMQw461LKRHG+Dins3FNaIkZXg01wevf0pFCo3UHmlBC5bPXtVXzdkoB5PoKsoM/M3/AOqkA9M8sx/+tTGO/wCgpksmVIFJG+Ysd6AIHyjEe/WpCuFJHeo25OCe1SRAyIc9e9AyszFevU1NYzbZCnY85qCZcsV7gVXinEMmZGxg8e5pDsb5x1PSq13GJYm3DjHSnW0huFEjDA9PSppenHpTJWjPMb6AWOoSbV25Oea19FuiWBZ6r+Krd1uS4PXvWfps2xkBfGDWS0N3qj0iJxJCMc8Vj6gh8xjtwBV7R5RJb1DqKfKxx3rR7GS0Zio22VTXUaeSYQcg59K5SbKsuBnJrq9MULaqPapgOZbIOOKXGFp3FI6g8jrWljEp3HesLVebaQf7BrcnOM5FYOrZFrNj+6cVnI3iU/Ab4WVP9o12/XArz/wM2biRTxzzXoC8kmqhsTU3FOahlPyEDrUo4yain5U1TM47nn+mybfHF0p4Jrt+9efTXHkfEF8dGAFegIdyg1y9TunsmIVyfaoriMvCwA5xU+acPvDPShoz5mivD/ql+lSdKVMEHHTNL3oWw29RBT+1NozTJ3BuaQCjOaUUhjhRRSdeKZIhNNIpxFNJpFIY1RnipGphFSzRDMZpMU/GO1LtpWKuQ7eOKgupfJjyOXbhR61cwADmqUEf2m7a4cZjT5Y/8alopMLe12JluWbkmr9lbgzbiOF5poAq7bJiJm6ZrSnHUzqTfKSNzk1WZW+ZunfrVgHrVcjLEdjXUcY8A4GemadIvyr2AYcU0dOc8VLIMxgjsQaAHuAQM9Krx9z6mppshd2eAOlRxjgVEtyo7DsUhp1MapGiN6hc4zUzdKgfnrWbNolaU8/e79Ko3ONtXpABVC5HWoZojnNWJKkDrXBaouJDXoGqL8pFcNqyfMTWtJ6insbnwruvJ8QXVsTxPbHj/dIP9a9KmjCkjHXp71434Lu/sXjHT5CcK8nlt9GGK9qnTcu3J/CulnIzNlB2ctgis29wM7pMZHQNzWhcSxrlWb/69VJo4QpIC+xNIRkyMCBjh16H1+v1qhcEEk9wa05o/LdgFAx3/lWbOGEjYOCTx7UxmPdfu5wwBVHGCf8Aa7VXuArBZgCATg5PetC5RZomj5z1BPY1mSMrKY5cqT1/2TVCK7KFJwCePXpTSWOQRRJIP4hyO9Rs+T7H1pkjio6jn0pHG5Dx93p9KaGbOCOKkXuPzpiIx84z3HBpGXqKcoxu46U44wD1oAoXCb1INZhGCRWzIuPxrLuU2yZ7GtIszmiGiikrQzCkpaSgQlJS0lAFulopaRQUtFdn8PPCLa7qIv7qM/YLZgSCOJG7D6DvSbshpXOn+G/gs2cI1rUI8TyL+5Rh9xT3+pr0WPn6ik8sIgUDCinKP7vT1Nc7d2bJWJR0oxgU1SPWnE4GetIAJ45qsxIY4qw5+TNVJCxYcYqWVEnikDdBzTnTP1NQowj92PSp05HzdaAZUmRYU3dD6+tUjduXCsdq5wRWhOm4H0rLnj9OvekykXyQU47VFFIFbGOTVe0uNytGfvD1qUcyY6dxQAMN0voc/lUqEow2j5ScH61C8m2RQBnJxVhXWMc/gPWgBlyuz5+lYNwstzeZ+4inJ9q6Jgz5LYz2z0rn9VuFj3Rxnp95vWpkVE2dMuxMdiDCKK0JDlcAZNcvoNwYzktwa6SGdZFPP1qlqS1qcz4qhZrJ2xhhXIWrbcE8nPWvQNdt/Ns5OSMLXnYLR8Ac5rN7m0dUeg+HJ98QB5FW74N5Rzzk8VleE5P4c5OK2tROYmJ4wO1X0MvtHPFGaZQOua6yzTZAoPXFcraebNdgc4z6V1sIEcSilAKhKoGaG4NJ9KG6VoZFO4+c7exFc/rB2xGPPJBroZ8Alm4AFc5dhrkzzn7iKQtZSN4GZ4OXZeSsOua7+LOwZrzzwrL5d5Indmr0Vfuj6U4bCq7it93IqGTOMY61NUTrnPNWzKJ5R4hxa+N45FPXFejWr+ZbIwOcivP/AB8gg1+0nAwT1rt9Fl83TYmz/CK5nud71gmXhmnduaTFKOaDJkNs2JZYz2ORU5FPKwrb+ZnEu7H1pvai1kK93cZ0NFKRRQMSgGiikAZp3akFFAhCTSU7FNIoGNPHSm04+9MJxSLQUUmfypryBAWPAAoKsS/uPs8vnP8AOVwig9TUMarDEqDgAVQtWe6uZLg8rnan0q9j1pXug5bPccvzuqgdTWm4Kw4UDiqlhHvkaQ9F6VcPKEVvTWlznqu8rFcl84IGKRFwxHf60vXvT0TBzitDMVSOvanPzEfelC5604CgRFM2VC59KF4FRlt0jf72M1IOeKzluWthc0xqf0pjUmCImzULdDUzc1E361mzaJUcYyeveqVzgj61fkHFUZuc+1QzQwNRxggVxerR9Tiu3v14auQ1ZM7quG4S2OZSZrW8iuEOGicOPwOa98ilNzBE6MdksYkVs8kHB4rwGdcMa9m8FXbaj4PsJN37yFTCTnkbTj+WK63scbL88ChiQo2t1JH+ehrMlWXBaQKHXJCg9R3z+HNbUp8yNlxjsB6GsnUZ4LcEzEZA+73NIDPuJQu3DCQEbcev1rGvbqGANvYA46A5NN1DVWkLRwjy16LgdsVgzylyck800FiS61VpGKopUVmzys/zk/MOtLK2efWo3YFG75qhCZLKCecHFIec5JHvSK2I2OD96l6gY6UxD14OTUi88+tMXBcgdetSRj5Rn8KYhSdsozkZoIXGBnIOKVx91hjA9aJOCc8FjkGkIglAFZ12mUJ9Oa1ZFyPrVCVQVIqkyWjMpKVhgkelJW5iFIaKKAEpKWkoEXaBXSaT4B8RavtaOxMETf8ALSc7R+XWumi+DV+RmbU4VPoqE1m5o05Wch4W8OT+JdWW0jysSDdM4/hX/E19A6Xp1vpenQ2VrGscUS7QAKwfBnhJfCllJG5E08r7nlAxkdhXT+Zj+E1nKVy0rIGUGoJN2OOKmMqEEHI+opjFdp5zWbLRGrkMM/jVhelV8ZIAqePIHNCGwfoe9VWY52Ly38qll3s37s8fxVGzpCox1PSkwQfJHhnOSe9IszM/PA7VBMfMwT1FMV+DgZZenvQUaJORjrVG6TacgdetSxScnnkjJ9qH2uTxnikLYxJgbe5Dg1c84PskXrTdThG1ZBzjrVOSf7Agd+d3QetIrc0bh44rfzHPXlfUmlsd1w3ny8AfdFUbdDdjzZ3+Qfd/wq7ZT+Y20cKvQUAXJ5AY8LwBXH6s2DJ69q6W/lzbyBDggda4u/nMkwUEnnmpkXBGhYzFLJX6MBW5oc/mIQzdTXPD5bYIPyq7o19FbzFGPzHoKE9RNaHRaooa1ceorzC6k8qd41HIavU7tw9sG28kV5dqrbL6faADu60S3HDY6rwYxEh3Ecium1AboTiuS8EZklJbsK7K5TKjjNUtiJbmNaxML9AOBXRnjArMtosXAY8YrQznn8qaFLVki8tQ3SkSlkbCk1Rn1M+/YsohT7zdfYVl6mq29gYl6hTk+tbQjA3SNyTWFq7ZtpfXacmspG8TmPDTE6yi++TXpyHKivMPCmX1dn7CvTIj8opwFV3JKjkB2+1SdRTJz+72jqa0Zitzyv4jlnvbeToAcCum8Iz+ZpkeewrJ+I9on9nR3BbDLJhR7Vb8DSbtNUe1cstz0VrTOsBopM0uKRiR3QPk7x1U5qSNxIgI6GlIDKQehGKFtms8RMwbjIp2d7ibVrC0UoNHHenYQ0ikBpTweKKQwzRzRmigBre1Jupx96YQKTKQ0nNNYGlIo70i0NJ4qHUok/s1Asn76Z9u0dh3p08oiQt37VTsY2lY3EnJ6LmlfoVyvcswosEKxoMACnZp2ORmpLeLzZ1HYcmhK7sDdlcu28ZjjRemeT70iSM25cYwSKmbGeuKrQ8zyoSeua6rWOK99RUBI561Oo+XNMVVAJ5p64A4piYq8jNL/CM0oHNJKPkb6UxFOLlc+pJ/Wp1qCD7ij2qdaxe5o9hWpjdKeTTG6UmCIzULjmpmqF6hm0SvN0qhKOD61emOBVKfp7YqGaoxb5flbiuV1ReG96669GUJrltTXIIpx3B7HH3SbWNeh/Ce/wB1jqNgzgeU4mQE9iMH9QK4W9j6n3q94IvfsXiWJCxCXCtER6nGR+ortWsTkktT1O91FAzCPIbO1iegPqK5O7mZiTvJIYhsjNa13Jh5RkDDBsk46j/61Yd6224kQH5S24Dp/nrUgkZc7Z+Ug8DnFZsjfe56njI9qvzAsSf19hVQxnHTkg4/WqQFRuVJJweeKiYfIx7GrDR9M89c+9QuSQ4Ix7VRDI1/1Zx2an9cexqNSOeeCM04fdFMkkQZJPcipV6fSokYE9MZ6cVKgBB7EUAOdcxl8njBoPzKme/FPwWQrjhhxSR8QhuuG7+4oAgckLgcHtVNxwauyFsDdwMdaqS8OaZJlzjbKffmoqsXYwyn2qvW62MXuFJS0lMkKSiigD62CgYAGBSMQDTs9c0zAx1zXKzdBwTmmHAJx1oCbOhOKU4B4wCakoPl7j60gjGdxHNGGOAwwfanE4wCaAIJ42JyrYxUZklUBWHHcip3wTkmmkcYpFIiFzH90fe9KqzZEwkz7GrEkKuRxj3qrPBIo+U7vY0ikOkOBn1NRLJwWI+6eajeWRWCsCVxUSzAkD+AnBBoCxaEgMilWznr9KmWQbsds8VSUbJR6UXF6IMJGN8x6D0oAu3DRhMEBmbgCsLUbKWeQGVtqoeSOwrWtYfKjaa4fJfk5qpfH7TbnYCF7UmNGS99iVYYyRGDgAVtWRCxDbwO9c6V8qTB5Irb0qQMCrc55pIqSJdTfy0btkVxc5zdkZzk11WsSguBmuVudsVz5h9al7lR2NYkR2+4ntWfa3BgvRIcbmPGe1Sb2ki3yHC9hWTLcb9QhjU/ekUfrQtx9D1G5OdMVm67R0ry3Vzm/l46mvTL+TbpyjOOK8z1TB1CTjqaqW5ENjqfAqY3nuBXYynkDua5vwZBsszIVxurpXwMsegqlsS9yEJhlCnnNWHYDA7CorcMVMrcZ+6KVgHO1j3oJLcX3M0jfM4HYdaWMFRzyMUn3QW9aojqQzHOQO1c7rrBbSY+imugm+7kdM81z3iEf6HK3qtZSN4bnP8Ag9f9OPbvXpCDaorzjwnzf16PH0H0pw2CruPBpjfMx9qcRk5FNx8pNWYo4D4lEPYKo6I1ReAZD9k29qu/EC3DaQzelZ3w/P8Ao5+tc0tz0Ifwzum5ApR60hOBSg4FIxHCoJpmF4m8khlwM1N3pDa/anRc4YHINDu9gTS1Y7NKcGkHBKnqODRVEhRjiijNAxMUmaU0080hiHnFNNKaSkUhp4PtSgZwOmaRjzVS8uCmFTls9qluxSTY7VIozepbQtvAUbznpUiIEUKOgqO1t/LUs/LvyTU/0o8ylorCYq9aRhIi54LdKqIhdwo71oOdoAXgCtaa6mFWXQjkbGTgnFRQD/S3b1UcU+ZiFwMk0RLi5BzgFPzrUxJlHUd807nHakx8xp2O9USKOOTTHOSR7U8DimE9eKBFS3+4M9uKnFQwj5amFYGzBqa3vT6jahgiNqhftUzVE2SazZtErTDrVOfPT0FXnFUJxn3qGaIy7xSQfeucv0BJ4rproHJxWDfR5OKaGcnqMY6DtWRDO1nfQ3KcNDIHH4Gui1JNtc3cphjXXTZzVEepXc++SOZOFniyCuOvXqfqay71PmRxkl0HQ556U7Q5PtfhS1ucF3t3CMMZxtPp9DWlc2sr27r91lbOd3PIzT6knPtB+9cEcKvy/Q1Ulj287cH0xW1dIikswxhcevHWsScrvOCwK+1UiWUJj/KqjHnnvUjyZ6ZxnvVV3+focetWiBFOCM9jinkkDgY9aZjdyR1FTKcqCfTmmIejH6+9Sqefu/54qJU+Yc496nUdNwz3pATIufUEDioYi3luAw28cH61MpwR3yaiAyZ16HqB+NAEbsCobH/16qS8HHerbNlBjtyRVWXHBx9aYiheD5QfQ1Tq9dj90frVGto7GM9xKDRRVECUlLSUAfW+MCkwOlG5t3ByKC2ATXKbi4pjqGX5h0pcnr1FJuDNj060hguRy1Nc56USMw5XnHb1piyhhkDnPPtSKQ1xuIPcd6bkpzg4/nT2zg44HamkncOecUihpdWXdnjFGM8k8VEnyytuIA/iFLJJ5hKKflHDN/SgCJ1EudvT+Kq11aJsBUbePlx3q6WWJOFyR0Wq7ku3mMcnP5UhmRPczW8GNhLHjPpSWpSCI3NwdztyB3NXruMCQEc8c/Ss29tWWXcrFs9AelIolF688n7xiAeQvpUttKqQzK3JU5A9qwjcSQzHzMjHHNWoLvErZ6OvJpJjaFuoi0wYdGGevSpdPmKTbex4oD741TA+XvUMTASNt42nmjZh0JNScu+QeF61gzRb5fMfk54HpWpdXSyny0GfU1ny4H1qHuWtiteTlI8Z4rI0xjdeIrSPqPNBP4VLqtxtQ81U8Kyb/E1sc9M1pFEyZ6xqTF4Vj7KtcHexCTUQoHJau11GYrb4HUjmuXtU+0ayoA3EGk9xR2O00CDybFARjir0z+bKsKjryfpToI1htlAwMDmi2iyXmJLbjx9KozJiAowB06VH99vftT2I5ApIlwOfwxQBKrEpg9aVzx9KU4OKY52n2pkoikzsI71zHiKTbYzL7V1EnCnBrlPEwzZSms57G0NzI8IsPtnPBr0WMnaOMV534UiDXGcdDXosRBQU4bBV3HngUhHyY6UN92hhwKswRyvjeHfokp9BXM+AJOGX0Ndn4nhEukzL1+WuI8DER3cqHs1c89zvpawZ6KPmFKBQPu0AVJmLTgzKQynBFNpw4polleCQl5Ec5YNnmp8Go/s0j3HmxDOB8wqUcikloNtdA7U00ppMVQCfWjilpDSGNIpMZNKTUM0ywRGRzjFSykiV49tpLcM4VUHfuazrSEyP50g57A9qdD5t2oaYkRg5VO31q2FA4paMpXV7gaMU3o3Qn3qRE3sFFMNkT2aEDee/AqxIQM+9LlVUAdAKhk+bHcE10pWVjkb5ncByScj86cCBOnGeDSbFIJxgnvS4KyRk84piJicGlznrSYy+aU85xTJA+tRse3TipF3bOf0qGQ8HtQNESfdqQcVGnSnisEasXtTGp9NbpQwREaif2qU1C54rNm0SCRhzxmqUvU+1W5KqTcA1DNChcc1k3cQ6iteXvVC5TgkikByWoxHB+tc3fLhjiuv1KLIIrlb9MMfSuqkzOotDrfhtcJLYajYSkfKyyKD7jB/pXSvLutvmwPl6fTrXnXgu8+x+IApJCzxsh579R/Kuqu9RJt2QZywY+3NbS3OdFW9nRNw3Z4POetYF3cqM7SenSnXVy7Z56VmyNyaaQmNklJzmoM55Bpck5DAdM01QB0GPWrJJRwo5qVP9WBnt3qHOUHPWpkAKL24oETpnPI5qYcgHr2qFQegPfvUgUfLx096QEyA84647npUIbE84HOUp6Eb8NkHpg96RRtuJgDnMf9KAIHJ2Djp1NVpCMnFWHP7sBunpVVjkmmIrXPML/hWfWjc/6l6zq1hsYz3CkopKsgKKKSgD623KRwQaGPFMSJO3SmlMMSCetch0jj02r/8AqpeFXAqHeULAfWmmYggjgZ596RViRm7VEoUFmHHr70jSKc4ahD3NIZKWyMDrTCf/AKwpMKwVlPHXIqOebYAFG5z90UAJK+P3aY3kZY+lCqttEARwTwKEQW8bSSEFuufU1E3747i3WgZHKzNLuJ47im7wUfGAF9aSd8AqODVDzwXZSeD1pAWncvGSmAe5PNMlQGONep7GoxLhAo/Knb/MC4OAtAzNvbVHyHXAzj3rNureS2ZT1UdMVuXUsMS5Y7pCflUVQMck+64uPkUDof6VLLTKKXRjQszgd+tRNe+dLtt+A/Vj2ou7JJ2MqEgf3exqtEG3bcbQOMCpbKSL8SLEpw249zVC6kwTVsErHWRqM3VV696SGYeqzmRyqn6mneFP+RghP90E5qnenBOKl8MPs12Js9jW6Whk9z07U5pZIgqccdaZ4askW5eY/M2eppJgZ8LuwAK19GiSOPCjkVC3BvQ2Mbl2+vFWVXagWq0fMij8anY4qiCMbi7blwO1SIOeO1N3Zz2p8eRnNIHsS96awpyj5aQ81RCK8pwCD3rl/EePsMv0rp5OQc8VyvioFLJsdzWU9jeG5neEd32gqO9egRgiMDqa4Hwh/wAfBzXoCcKKcNhVdxepUUrDNC8saCKsxM3V0D2Eo7ba878K/utenixt+bOK9Nuk3wsmOorzayH2Txg6n+KsKm520Ho0ehDpRzSIflH0pwHNQSKppw5pvenUxDkdo8lO4xUEEu8HP3lOCKkzTI7WR7ppIiOV+YHvRrcWiTuSHmkzRSdKYAeKbzTiKjd1jUsxAA61LKQ+OMyyBBxnv6VRkh+0XbFjmJDhR/e96InlupS4JSEcD1arOAvAGBU6MtXTEIwMDikAI96U89KPrQMBzmrVtGAvmN1PSqqrlgo71fP7tFTtitKau7mVV2VhGPHWo1GT1oc5c1JGADg1uYDtuFGKYQQyknPPAp2Dzg4FIwJ2/wC8KAJsfMfXFIBtJoBxu74pg+bnkH0pkji3OBzxUUh+Q56ipAm0Z71FPx27UnsUtxq8CnU1adWJowpDS01hQwRG3pUUmelTNUEn3qzZtEqyHBIqpMaty96quM1BoVHGWJ28VSuRyQRx2rSkXP0qjcj5eOaQI53UE4OK5XUY+Sa7C/H4Vy+pICWxW1N6imtDEtZza6hBOOPLkDfrXW3LYlePn5XyD7GuNnGGNdKJRcWdrJnPmxbWye46V1s5OpRuQFkPIHOCKpvnnntVm9ZVkBBzntiqLkZz61SJY0vk+/amgDOSOaP5CgZ9KokmUfLUsP3MH1xUKelSxAgkY96QFhKnXBINQp+lTKOeOKQDtuHHHPpTQcXcxLDPlH+VOkbO3GQQaiyRcT9AfLOKAKrHIFQN1NT7So45bHeoGpiK9x/qX+tZ9aNz/qH+tZtaw2MZ7hSUtJVkBSUUUAfWw2jgUxTnPHekXg8N0pkDAgn3NcdzqsPbBz69qZIueAoPHSlz+NNLY9aAIWhzJjsw5NIQyDjmpkbDke3WlKAn+VAyg9x9kUluh7e9LbLvJuJG+Y9+wHpUl5B5kyDb91STVS4jkiCJF025K0iia4lNx8ucAcimQuB+6xwelU0uQMqeG71IkuCo6DPzH0oAZeSbcsxAI6gHtWQJtsp4yT0q3qc6oxI+63BrHMwjbzW+6o596hstI1PtMcKtLM4HfFQwz3Wot+5xFB3Y8Vlxt9rkN3ccQqflX+9Ukl88gZU+SH+FBxRcdjSluLK03pGDcy46noKqySzXUYMjdfyFUI5MStn7pHJqRp84HNILE7soG1efeo2RZOow3rUZlAX3pokLMAp/GpZSGXMhhXB6npWFey7QT3rpJUjmjIfHA4NctqsT28hVuh5BpxBmLdPuJp+jv5eqRN05qGY5JqOGTyp0cHo1b9DJnrNo4dVJ7966CyCRx+nvXIaLdrJFGSc8VuTXrbY7eLh5Djj0qAZvWUhmmeQfcHAq8eRmqtggjtwo7Vb7UySMjOFzzUmccd6aRzxTk+Z/YUhMlFROMNuB47ipaawzVMlblZxgEk5Fcf4jnM0L4HyqcZrq70sEMadWrlvE8YtrBIRyxOWrGZ0U9yr4TB+0k13yH5a4PwpkSnHIz0ru1OI8DvVQ2Jqbj1Py59TS5BpCoKgUcgepqzIY4yprzLXFNp4pgkHCl8Zr05l3Lg15746gMN1HccDDgisqmx0UH71jsLVt8CH2qf61n6NN59hE3qorQrIuW4Z+alJpKb70CHU+ORonDr1Hb1qPqM0mad7CauM88/aHWT5SxyKlz0qCeITJjow5B9KPMaKMecVBCbiQe1Te25VkTkj1x7moLuBJp1VX3xIMkjoxqqGa+n3AkW6njtvq6MKoXGAKNx25WJgBcAYApDTqaaBoOopKUnj3pFVnYL3NIZPbrgGRuPSrEnQH0qOXKQEAcAUSNuhUj2rpirKxyyd3cjXdJKNuNvfNWFU7+vbmo1RRgYxmpRuHANUSHXOeR6U5Vxz+VNA/AmnnAx60CY1D8zCkUYJ+v5UA4nK+ozQB8x+brQA/CkH61XmK5xk7s1YHpVebHHGMmiWw47gOlL3pqmnisTRiE01jTqae9DBEZ6VC/NTPULGs2bRKso5NV2HNWJeahcVBZA4HaqNyCE4q+5wDVCc5pFGLej72elc1qKgZI/OuqvEyDiuc1BMg8Z5rSG4PY5O5XkmrNvfBdOFuwzsfINMvEwzVUjONwNd0dUcctGXHuhIOmSCaiLgnoBTFJwfrSj39aohhuOM+ntTgevvTM4oBywxTJJ0zketTx4Lge571XQ85zT4up9hUjLY4PBx7VMrDIyeTVNWPPrUg6n6ce1Ai5nIwT06VBgC6A+9vQr+NR5/dbs9elN8xluIMdQc0AQk4XHftUJp5OWb3NRseDTEQT/8AHs1Z1acw/wBHYe1Ztaw2MZ7iUlLSVZAlFFFAH1dK7KPlxnuagidoIyNoYeo/rVllJ+YHmoimDuXjPX0NcZ1ohNzwfl5A4ApwmGzLAoR29qSSIMSe9V8SRuQvPqDSGXoiGG7NSAjdt6HPeqcEkfEY+THarW8Bck52igTGqvmSOT0zikmjU54qWNf3I7E+lMAbLbueOKYGLe2uw7x+fpWa0xhVVbJHY10s8SuvIyPSsK5hVJDvORjHSpZSZmX8ouFCr0HSseVvtEvkBj5cfLn+laWowSQQOYQXHX6VmqgihEf8TcsfWoZqth8rFsAcRjoKj35YqvQU45OBxmmFc9KkobuO7rmnGQD5jwB61FLIsS7m+92HrTIYHnYPMeOy0wFed5CNikgd+1J9pePqwH0qW4dY1wOPasW5u8MaEhG3FOsjDJJ+tT39mmo2RTA8xRla5m31IJIMtiuisr1WUMKbVgOEuY2imaOT7ynGKgbiuh8U2irOLqMYD9a5wjmto6oylozs/D94sdopc9BXU6Cy3l29wc4XhM155plwY4MdRXonh1VjtE4xkVLWodDsrTKxg9jVnOarWq/ugParCgfQ0EA3ALVJGNqD1NRN8zhfxNSk+lCBjj0phwqk1J1FRkbmx2FNkogKhQ0j9cVxXimVio3HqeK7O6OVOO1cN4pfLovesZnRT3JvCS5kLA85ru05KiuG8Grl29BXcwD5S3rVQ2JqbjzgNnFIePpSk5pATVmQDmuJ8fWzzWnmdVHQV27cKcVgeK4EfSnLZJAwAKiexpSdpGT4Nu/O01FJ5UYrph0rz7wVd+XLJbns1egKcqK5zqqLUDSe9BozxQQJmjODR0pM80hgTUeux29lo0l+jZm2BRz6nmnmo5oEnTy5BuX0NNNWaaC2qdxmnyrLZRMvAxVrtUUcawoEQYA6U/NJDerEPWijNJmgYGpogY1LFSSentTIo9747d6sSOo+UHpWlOPUyqS6EZJZCrZyBjmltiJLZWPJFMzulA3VJZqFtsY/iNbmJKAG+brjpTlAHTvQqqq5A5oHbK9qBDgAT6470jKS3XApfur9elMOAcjr70CGsQJoz65FSYw+ahmOE3f3SKlPO09KBsXeoJHcdqgd9z424weKlEOAcuSagdAkmBn6k0pbDhuOFOFNFOrIti9qYe9OppoYIjeq8nU1YaqsoIz61mzaJCw6moZDipz2qB+T7CoZoQP096qTplTirj1BN0NIZjXSk9vrWBfwdeTiumuVGCfSsK9jyD3xVReozj72MgHNZZ+V639QjwG46VhTLhq7ab0OSotRVOAe9OB5GetNjOVNKSrHkfjWxiPIG3r1pFGCcnjPFCgA4B4pSORQIdHkDnpipYv4j055qJOWx7VLCfnb8KQEqoeNp5xTkJx0OfSmo3PTFSc7s57cUgHffUFT3zUSfNO7txsX1qTCggjj2pkODC7E8M/NAFY01ulSyDnjp2qI9RTENkGY2HtWVWselZTcMR71rAymNpKWkqzMSiiigD//2Q==" alt="Naama Rivlin-Angert">
+      </div>
+      <div class="subtitle">Hebrew University of Jerusalem</div>
+      <div class="location">Jerusalem, Israel</div>
+      <div class="social-row">
+        <!-- Google Scholar -->
+        <a class="social-link" href="https://scholar.google.com/citations?user=HN2XK9IAAAAJ&hl=iw" target="_blank" title="Google Scholar">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5h3.6v.8C2.5 11 1.7 12.3 1.7 13.8c0 1 .3 1.9.9 2.6l-1.3 1L2 18.1l1.2-.9c.6.5 1.4.8 2.2.8 1.9 0 3.4-1.5 3.4-3.4 0-1.5-.8-2.8-2-3.4v-.8H12l12-9.9H12zm-4.8 9.9a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8z"/></svg>
+        </a>
+        <!-- Email -->
+        <a class="social-link" href="mailto:naama.rivlin-angert@mail.huji.ac.il" title="Email">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        </a>
+        <!-- LinkedIn -->
+        <a class="social-link" href="https://www.linkedin.com/in/naama-rivlin-angert-009042107/" target="_blank" title="LinkedIn">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <!-- Twitter/X -->
+        <a class="social-link" href="https://twitter.com/NaamaRivlin" target="_blank" title="Twitter / X">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <!-- Bluesky -->
+        <a class="social-link" href="https://bsky.app/profile/naamarivlin.bsky.social" target="_blank" title="Bluesky">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.204-.659-.299-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8z"/></svg>
+        </a>
+      </div>
+      <div class="home-bio">
+        <p>Hi there! Welcome to My Website!</p>
+        <p>I am a postdoctoral researcher in the ERC-funded project Varieties of Nationalism Shape Our Polarized Politics (VARNATPOL) and a research fellow at the Faculty of Social Sciences, Hebrew University of Jerusalem. I am honored to be a recipient of the <a href="https://www.isf.org.il/#/" target="_blank">Israel Science Foundation (ISF) Postdoctoral Fellowship</a> for 2026-2028. I hold a PhD in Political Science from Tel Aviv University, where my dissertation was recognized with the <a href="https://www.ispsa.org/annual-conference-2026" target="_blank">Best Dissertation Award by the Israel Political Science Association</a>. </p>
+        <p>I work within the field of Digital Humanities and Computational Social Sciences (DHSS; CSS), developing computational and data-driven approaches that bring new insight into inquiries of political science.</p>
+        <p><a onclick="showPage('research')">My research</a> lies at the intersection of political behavior, political psychology, public opinion, and political communication, with a particular focus on how identity dynamics shape, and are shaped by, political discourse.</p>
+        <p>My research has been published in the <a onclick="showPage('research')">Empirical Methods in Natural Language Processing</a> (main and findings), <a onclick="showPage('research')">Public Opinion Quarterly</a>, and <a onclick="showPage('research')">European Political Science</a>.</p>
+        <p>Beyond my current research, I'm a member of the <a href="https://deepstory.huji.ac.il/" target="_blank">DeepStory Lab</a> at the Hebrew University, and have also contributed to various large-scale projects, including the <a href="https://socsci4.tau.ac.il/mu2/ines/" target="_blank">Israeli National Election Study</a> (INES), and the <a href="https://socsci4.tau.ac.il/mu2/ines/isf-center-of-excellence/" target="_blank">ISF-funded Center of Excellence "Looking beyond the Crisis of Democracy: Patterns of Representation in Israeli Elections."</a></p>
+        <p>Thanks for stopping by!</p>
+      </div>
+    </div>
+    <div class="home-right">
+      <div class="recent-label">Recent Publications</div>
+      <div class="recent-item">
+        <div class="pub-venue">EMNLP Main 2025</div>
+        <div class="pub-title"><a href="https://aclanthology.org/2025.emnlp-main.841/" target="_blank">The Enemy from Within: A Study of Political Delegitimization Discourse in Israeli Political Speech</a></div>
+        <div class="pub-year">Rivlin-Angert &amp; Mor-Lan &middot; 2025</div>
+      </div>
+      <div class="recent-item">
+        <div class="pub-venue">EMNLP Findings 2025</div>
+        <div class="pub-title"><a href="https://aclanthology.org/2025.findings-emnlp.523/" target="_blank">HebID: Detecting Social Identities in Hebrew-language Political Text</a></div>
+        <div class="pub-year">Mor-Lan, Rivlin-Angert et al. &middot; 2025</div>
+      </div>
+      <div class="recent-item">
+        <div class="pub-venue">Public Opinion Quarterly</div>
+        <div class="pub-title"><a href="https://academic.oup.com/poq/advance-article/doi/10.1093/poq/nfaf021/8163007" target="_blank">Can Personality Traits Predict Voter Attitudes When Left and Right Are Structured Around Conflict and Peace?</a></div>
+        <div class="pub-year">Rivlin-Angert, Yakter &amp; Sheffer &middot; 2025</div>
+      </div>
+      <div class="recent-item">
+        <div class="pub-venue">European Political Science</div>
+        <div class="pub-title"><a href="https://link.springer.com/article/10.1057/s41304-024-00489-2" target="_blank">The Pitkinian Public: Representation in the Eyes of Citizens</a></div>
+        <div class="pub-year">Lavi, Treger, Rivlin-Angert et al. &middot; 2024</div>
+      </div>
+      <button class="more-research-btn" onclick="showPage('research')">View all research &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESEARCH -->
+<div id="research" class="page">
+  <div class="page-container">
+    <div class="page-header">
+      <div class="eyebrow" style="margin-bottom:0.6rem">Academic Work</div>
+      <h2 class="page-title">Research</h2>
+    </div>
+
+    <div class="research-section">
+      <div class="section-label">Peer-Reviewed Publications</div>
+
+      <div class="pub-card">
+        <div class="venue">EMNLP 2025 &middot; Main</div>
+        <h3>The Enemy from Within: A Study of Political Delegitimization Discourse in Israeli Political Speech</h3>
+        <div class="authors">Naama Rivlin-Angert and Guy Mor-Lan</div>
+        <div class="pub-links">
+          <a class="pub-link" href="https://aclanthology.org/2025.emnlp-main.841/" target="_blank">Manuscript</a>
+          <a class="pub-link" href="https://drive.google.com/file/d/1TMPaADP2qT4we-ENhslIZ-jUEWpa22je/view?usp=drive_link" target="_blank">Slides</a>
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">We present the first large-scale computational study of political delegitimization discourse (PDD), defined as symbolic attacks on the normative validity of political entities. We curate and manually annotate a novel Hebrew-language corpus of 10,410 sentences drawn from Knesset speeches (1993-2023), Facebook posts (2018-2021), and leading news outlets, of which 1,812 instances (17.4%) exhibit PDD and 642 carry additional annotations for intensity, incivility, target type, and affective framing. We introduce a two-stage classification pipeline combining finetuned encoder models and decoder LLMs. Our best model (DictaLM 2.0) attains an F1 of 0.74 for binary PDD detection and a macro-F1 of 0.67 for classification of delegitimization characteristics. Applying this classifier to longitudinal and cross-platform data, we see a marked rise in PDD over three decades, higher prevalence on social media versus parliamentary debate, greater use by male than female politicians, and stronger tendencies among right-leaning actors — with pronounced spikes during election campaigns and major political events. Our findings demonstrate the feasibility and value of automated PDD analysis for understanding democratic discourse.</div>
+      </div>
+
+      <div class="pub-card">
+        <div class="venue">EMNLP Findings 2025</div>
+        <h3>HebID: Detecting Social Identities in Hebrew-language Political Text</h3>
+        <div class="authors">Guy Mor-Lan, Naama Rivlin-Angert, Yael R. Kaplan, Tamir Sheafer, and Shaul R. Shenhav</div>
+        <div class="pub-links">
+          <a class="pub-link" href="https://aclanthology.org/2025.findings-emnlp.523/" target="_blank">Manuscript</a>
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">Political language is deeply intertwined with social identities. While social identities are often shaped by specific cultural contexts and expressed through particular uses of language, existing datasets for group and identity detection are predominantly English-centric, single-label, and focus on coarse identity categories. We introduce HebID, the first multilabel Hebrew corpus for social identity detection: 5,536 sentences from Israeli politicians' Facebook posts (Dec 2018–Apr 2021), manually annotated for twelve nuanced social identities (e.g., Rightist, Ultra-Orthodox, Socially-oriented) grounded by survey data. We benchmark multilabel and single-label encoders alongside 2B–9B-parameter seq2seq LLMs, finding that Hebrew-tuned LLMs provide the best results (macro-F1 = 0.74). We apply our classifier to politicians' Facebook posts and parliamentary speeches, evaluating differences in popularity, temporal trends, clustering patterns, and gender-related variations in identity expression. We utilize identity choices from a national public survey, enabling a comparison between identities portrayed in elite discourse and the public's identity priorities.</div>
+      </div>
+
+      <div class="pub-card">
+        <div class="venue">Public Opinion Quarterly &middot; 2025</div>
+        <h3>Can Personality Traits Predict Voter Attitudes When Left and Right Are Structured Around Conflict and Peace? Lessons from Israel</h3>
+        <div class="authors">Naama Rivlin-Angert, Alon Yakter, and Lior Sheffer</div>
+        <div class="pub-links">
+          <a class="pub-link" href="https://academic.oup.com/poq/advance-article/doi/10.1093/poq/nfaf021/8163007" target="_blank">Manuscript</a>
+          <a class="pub-link" href="https://drive.google.com/file/d/1THiZoLxDVjW-sa3JTiMW3HfQ8L1EKVj2/view?usp=drive_link" target="_blank">Slides</a>
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">The relationship between personality traits and political attitudes has been studied extensively. However, existing accounts largely study personality's links to liberal-conservative divisions on social and economic issues. We know far less about its attitudinal influences when politics is organized around other issue domains, particularly ethnonational conflicts. Addressing this gap, we examine the relationship between the Big Five personality traits, policy preferences, and political orientation in Israel, where the main ideological cleavage involves the Israeli-Palestinian conflict. We find that the known relationships with social and economic attitudes operate only partly and more weakly in this context. Unlike these domains, conflict-related preferences in Israel correlate primarily with greater conscientiousness through authoritarian tendencies. General Left-Right orientations mimic this relationship, reflecting conflict-related views rather than social or economic inclinations. These findings expand the scope of the current debate about personality and political attitudes and underscore the importance of national ideological contexts for future research.</div>
+      </div>
+
+      <div class="pub-card">
+        <div class="venue">European Political Science &middot; 2024</div>
+        <h3>The Pitkinian Public: Representation in the Eyes of Citizens</h3>
+        <div class="authors">Liron Lavi, Clareta Treger, Naama Rivlin-Angert, Tamir Sheafer, Israel Waismel-Manor, Shaul Shenhav, Shira Dvir Gvirsman, Liran Harsgor, and Michal Shamir</div>
+        <div class="pub-links">
+          <a class="pub-link" href="https://link.springer.com/article/10.1057/s41304-024-00489-2" target="_blank">Manuscript</a>
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">What does it mean for citizens in democracies to be represented? Does it even matter? Representation theories and studies have mostly emphasized the representatives, giving only limited attention to the represented. In this paper, we address this lacuna by adopting Hanna Pitkin's multidimensionality of representation and the act-for/stand-for tiered structure she posits, along with a reconceptualization of dyadic and collective representation as a matrix (rather than a dichotomy). We develop theoretically (and examine empirically) how citizens perceive all of Pitkin's dimensions concurrently and their tiered structure at two points on the dyadic-collective matrix: representation by a politician/party and representation by the parliament. We develop a novel set of questions, based on in-depth interviews and designed to capture Pitkin's theoretical concept of representation empirically among citizens. Utilizing the 2019-20 Israel National Election Studies, we find that citizens' subjective patterns of representation are Pitkinian — multidimensional and tiered — across dyadic and collective representation. We further find that these patterns contribute to citizens' overall feeling of representation, and that multidimensional representation, especially by the parliament (where they feel less represented), promotes support for democracy. Our study calls for more focus on representation from the citizens' standpoint.</div>
+      </div>
+
+      <div class="pub-card">
+        <div class="venue">Book Chapter &middot; 2022</div>
+        <h3>King Bibi: The Personification of Democratic Values in the 2019-2021 Election Cycle</h3>
+        <div class="authors">Liron Lavi, Naama Rivlin-Angert, Clareta Treger, Tamir Sheafer, Israel Waismel-Manor, and Michal Shamir</div>
+        <div class="pub-links">
+          <a class="pub-link" href="https://drive.google.com/file/d/1ztfwUdvZR14hCug-szSRMhpfmPcSKThO/view?usp=drive_link" target="_blank">Manuscript</a>
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">The 2019-2020 election cycle was focused on Netanyahu, the incumbent Prime Minister for over a decade. Second on these elections' agenda was the "future of the Israeli democracy". We build on the literature of political personalization, which places Israel high on the list of countries that went through personalization, to examine whether and how Netanyahu has come to embody attitudes toward democratic principles and values in this election cycle. We call this neglected manifestation of centralized personalization "personification" and find evidence for it beyond already-documented political and sociological sources of democratic support. Netanyahu personifies authoritarian views and, to a lesser extent, also illiberal approaches. We suggest that personification may be a mechanism of democratic regression, thus joining the growing public and academic concerns about "democratic backsliding" in Israel and worldwide.</div>
+      </div>
+    </div>
+
+    <div class="research-section">
+      <div class="section-label">Under Review</div>
+
+      <div class="pub-card">
+        <h3>When Labels Become Burdens: The Consequences of Political Delegitimization Discourse on Political Identity Deconstruction</h3>
+        <div class="authors">Naama Rivlin-Angert</div>
+        <div class="pub-links">
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">This paper investigates the puzzle of political identity renunciation, examining why individuals abandon a political identity while retaining its associated policy preferences. It proposes a novel theoretical framework of political identity deconstruction, arguing that sustained Political Delegitimization Discourse (PDD), which strategically stigmatizes a political label, generates psychological pressure for individuals to disavow the tainted identity to preserve self-esteem while maintaining their instrumental policy views. This framework is tested in Israel (1992-2022), where the "leftist" label has been systematically stigmatized for decades. Combining computational text analysis of parliamentary discourse with decades of public opinion data, it tracks PDD and its impact on identity. Results suggest a robust link between elite rhetoric and identity change, with Granger causality tests confirming temporal ordering. The study demonstrates how symbolic political rhetoric can fundamentally reshape the electorate, highlighting the fragility of political identification and the corrosive power of discourse in contemporary democracies.</div>
+      </div>
+
+      <div class="pub-card">
+        <h3>Keep Women Posted: Intraparty Candidate Selection Methods, Candidates' Discourse, and Representation</h3>
+        <div class="authors">With Yael Kaplan, Vered Porzycki, Guy Mor-Lan, Israel Waismel-Manor, and Shaul R. Shenhav</div>
+        <div class="pub-links">
+          <a class="pub-link" href="https://drive.google.com/file/d/1TXpQpcJH8GAnxBBO_MnZTlKDRn6lBcMC/view?usp=drive_link" target="_blank">Slides</a>
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">Although women's presence in parliament has significantly grown worldwide, women still constitute the largest underrepresented social group in the political arena. Some explain this by pointing at national-level cultural and institutional factors. Others emphasize the role parties' characteristics play in facilitating women's representation. Specifically, scholars contend that candidate selection methods affect female representation. Such work usually refers to the descriptive dimension of women's representation, meaning to what extent female politicians occupy realistic slots in the party's candidates list. However, representing women is not only a matter of holding political positions but also of the extent to which women-related issues are addressed. This paper examines whether the type of intra-party candidate selection method affects the amount of discourse party members (whether men or women) dedicate to women-related issues. We explore whether the candidate selection method improves the substantive representation of women. Utilizing a supervised deep learning model, we analyze a data set comprising all national-level aspiring politicians' Facebook posts during four election campaigns of the Israeli Parliament (65,061 posts). Our analysis indicates an overall gap in issue attention between different selection methods. Results show that a more inclusive (rather than exclusive) method is correlated with greater women's substantive representation.</div>
+      </div>
+
+      <div class="pub-card">
+        <h3>The Identity-Setting Function of Social Media</h3>
+        <div class="authors">With Yael Kaplan, Guy Mor-Lan, Shaul R. Shenhav, Shira Dvir Gvirsman, Israel Waismel-Manor, and Michal Shamir</div>
+        <div class="pub-links">
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">This paper introduces the concept of identity-setting, an analytic framework for understanding how politicians' discourse and communicative environments shape the salience of social identities among the public. Identity-setting posits that political communication influences which social identities (e.g., partisan, ethnic, ideological) become most salient, rather than simply dictating belief or affiliation. We argue that people's positionality towards the speaking politician can impact the ability of politicians to activate identities. Using a novel empirical strategy that combines longitudinal survey data with supervised deep-learning analysis of politicians' social media posts in Israel (2019-2021), the study systematically examines the relationship between elite identity discourse and followers' identity salience. Findings reveal that politicians' cues on social media can activate identity salience, but only under specific communicative and relational conditions, particularly when cues are received from favored political communicators. These results highlight that identity activation is contingent on both message content and audience attitudes.</div>
+      </div>
+    </div>
+
+    <div class="research-section">
+      <div class="section-label">Working Papers</div>
+
+      <div class="pub-card">
+        <h3>The Rhetoric of Reaction: Hirschman's Typology in CPAC Speeches, 1995-2025</h3>
+        <div class="authors">With Liron Fisher and Noam Gidron</div>
+      </div>
+
+      <div class="pub-card">
+        <h3>The Identity Foundations of Political Values: The Dynamics of Public Opinion in Israel, 1988-2025</h3>
+        <div class="authors">With Michal Shamir</div>
+        <div class="pub-links">
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">This paper asks: How do the three main components of political identity — group identification, policy attitudes, and emotions — combine to structure public opinion regarding political values? And how does their relative weight shift across values and over time? We develop a domain-contingent, time-varying framework of political identity in which (i) the three components need not be collinear, (ii) different values may be predicted by different components, and (iii) system shocks can recalibrate their weight. Using survey data from 1988-2025, we assess the distinct contribution of each identity component in shaping four central values in Israeli politics: maintaining a Jewish majority, territorial expansion, support for democracy, and support for peace. Four key findings emerge. First, individuals consistently cluster into two coherent bundles: identity, attitudes, and emotions tend to move together, dividing the public into opposing camps across issues. Second, policy attitudes exert the strongest influence in most years and values. Identification typically ranks second, with its role growing in anchoring support for democracy. Third, we identify two temporal breakpoints — in the early 2000s and again after 2019 — that recalibrate the balance among the three identity components. Finally, since 2019, polarization has sharpened as identity and issue bundles align more tightly.</div>
+      </div>
+
+      <div class="pub-card">
+        <h3>Deconstruction of Political Identities - Experimental Evidence</h3>
+        <div class="authors">Naama Rivlin-Angert</div>
+        <div class="pub-links">
+          <a class="pub-link" href="https://osf.io/k7yxd" target="_blank">Pre-Analysis Plan</a>
+          <a class="pub-link" href="https://drive.google.com/file/d/1y3qH2MTtjtULg1mA3D5hVlTKl9hiZqmT/view?usp=drive_link" target="_blank">Slides</a>
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">Political identity is a significant and fundamental part of an individual's identity. Despite the vast interest in the concept of political identity, in the way it is formed and crystallized, in its meaning and implications, to the best of my knowledge, there have been no theoretical or empirical investigations into processes of deconstruction of political identities. In this paper, I propose a new theory for political identity deconstruction, building on Huddy's (2001) four factors for identity formation. I then examined through an original survey experiment the effect of political delegitimization discourse on the willingness of citizens to identify with delegitimized political groups. The findings emphasize the complex and layered nature of political delegitimization and its far-reaching implications for shaping political identity in contemporary societies.</div>
+      </div>
+
+      <div class="pub-card">
+        <h3>The Impact of Exogenous Shocks on Affective Polarization: Examining the Israeli Case Post-October 7th Events</h3>
+        <div class="authors">With Yael R. Kaplan</div>
+        <div class="pub-links">
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">How do exogenous shocks shape the extent of affective polarization? While recent studies have examined under which circumstances affective polarization can be reduced, little attention has been given to the potential effect of exogenous shocks on political systems, and their ability to reduce affective polarization. An accepted assumption is that external threat perception can lead to a 'Rally-Round-the-Flag' effect, fostering greater social cohesion. However, recent work suggests that external threats do not necessarily decrease social animosity and might even increase polarization. The October 7th events and the ensuing Gaza war present an opportunity to examine this in Israel, a highly polarized society. Using a unique survey experiment that manipulates political and national identities, this study sheds light on the mechanism that shapes affective polarization in times of crisis. We find that exogenous shocks reduce affective polarization among individuals who enhance their national identity and increase it among those who reinforce their political identity.</div>
+      </div>
+
+      <div class="pub-card">
+        <h3>Democracy on the Ballot: Representation and Support for Democracy</h3>
+        <div class="authors">With Liron Lavi, Clareta Treger, and Michal Shamir</div>
+        <div class="pub-links">
+          <button class="toggle-abstract" onclick="toggleAbstract(this)">+ Abstract</button>
+        </div>
+        <div class="pub-abstract">Democracy has been "on the ballot" in democracies around the world in recent years, becoming the subject of competing representation claims. We argue that when democracy is politicized, the support for democratic values is no longer diffuse; instead, it is linked to specific political actors who claim to represent democratic principles. Using the 2019-2021 Israeli four-election cycle as a case study, we show how the relationship between representation and democracy changes when democracy becomes a politically divisive issue. With data from the Israel National Election Studies (INES) on the first and third elections in the cycle, we find that citizens' perceptions of collective representation relate to specific democratic support — regardless of political affiliation and the politicization of democracy. Furthermore, as democracy became politicized along the election cycle, diffuse support for democratic norms remained high but became contingent upon dyadic perceptions of representation in a politically-sorted way.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CV -->
+<div id="cv" class="page">
+  <div class="page-container">
+    <div class="page-header">
+      <div class="eyebrow" style="margin-bottom:0.6rem">Curriculum Vitae</div>
+      <h2 class="page-title">CV</h2>
+    </div>
+    <div style="margin-bottom:2.5rem;">
+      <a class="cv-download" href="Academic_CV_Naama_Rivlin_Angert.pdf" target="_blank">
+        &#128196;&nbsp; Download CV (PDF)
+      </a>
+    </div>
+    <div class="more-section">
+      <div class="section-label">Contact</div>
+      <ul class="more-list">
+        <li>You can reach me by email: <a href="mailto:naama.rivlin-angert@mail.huji.ac.il">naama.rivlin-angert@mail.huji.ac.il</a></li>
+        <li>You can also visit my <a href="https://www.linkedin.com/in/naama-rivlin-angert-009042107/" target="_blank">LinkedIn</a>, <a href="https://bsky.app/profile/naamarivlin.bsky.social" target="_blank">Bluesky</a>, or <a href="https://twitter.com/NaamaRivlin" target="_blank">Twitter</a> accounts.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MORE -->
+<div id="more" class="page">
+  <div class="page-container">
+    <div class="page-header">
+      <div class="eyebrow" style="margin-bottom:0.6rem">Beyond the Publications</div>
+      <h2 class="page-title">&amp; More</h2>
+    </div>
+
+    <div class="more-section">
+      <div class="section-label">Invited Talks</div>
+      <ul class="more-list">
+        <li>
+          <strong>HebID: Detecting Social Identities in Hebrew-language Political Text</strong><br>
+          Computational Text Analysis PhD Seminar, TAD Center, Tel Aviv University
+        </li>
+        <li>
+          <strong>When Political Dynamics Meets Computational Models: An LLM-Based Analysis of Delegitimization Discourse</strong><br>
+          Computational Text Analysis (CTextA) Seminar, TAD Center, Tel Aviv University &middot;
+          <a href="https://www.youtube.com/watch?v=SzYg36VmF1M&t=130s" target="_blank">Recording (Hebrew)</a>
+        </li>
+        <li>
+          <strong>Do Personality Traits Predict Voter Attitudes When Politics Is Structured Around Conflict?</strong><br>
+          Panel on Israeli politics in turbulent times, Hebrew University of Jerusalem
+        </li>
+      </ul>
+    </div>
+
+    <div class="more-section">
+      <div class="section-label">Teaching</div>
+      <ul class="more-list">
+        <li><strong>From Data to Insights: Sentiment Analysis and Topic Classification in the Social Sciences Using Generative AI</strong><br>DHSS Hub, The Open University of Israel &middot; 2026</li>
+	<li><strong>Advanced Research Methods for Master Students</strong><br>School of Political Science, Postgraduate Program, Tel Aviv University &middot; 2021-2023</li>
+        <li><strong>Research Methods for Political Science</strong><br>School of Political Science, Undergraduate Program, Tel Aviv University &middot; 2019-2024</li>
+        <li><strong>The Israeli Political Regime</strong><br>School of Political Science, Undergraduate Program, Tel Aviv University &middot; 2019-2020</li>
+      </ul>
+    </div>
+
+    <div class="more-section">
+      <div class="section-label">Media</div>
+      <ul class="more-list">
+        <li>
+          <strong>The Enemy from Within &mdash; A study of political delegitimization discourse in Israeli political speech</strong><br>
+          The Institute for Liberty &amp; Responsibility, Reichman University &middot;
+          <a href="https://www.runi.ac.il/research-institutes/government/libres/writings/all-writings/the-enemy-from-within-a-study-of-political-delegitimization-discourse-in-israeli-political-speech" target="_blank">Read (Hebrew)</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showPage(id) {
+    var pages = document.querySelectorAll('.page');
+    for (var i = 0; i < pages.length; i++) {
+      pages[i].classList.remove('active');
+    }
+    var btns = document.querySelectorAll('.nav-links button');
+    for (var j = 0; j < btns.length; j++) {
+      btns[j].classList.remove('active');
+    }
+    document.getElementById(id).classList.add('active');
+    var navBtn = document.getElementById('nav-' + id);
+    if (navBtn) { navBtn.classList.add('active'); }
+    window.scrollTo(0, 0);
+  }
+
+  function toggleAbstract(btn) {
+    var card = btn.parentNode;
+    while (card && !card.classList.contains('pub-card')) {
+      card = card.parentNode;
+    }
+    if (!card) return;
+    var abstract = card.querySelector('.pub-abstract');
+    if (!abstract) return;
+    if (abstract.classList.contains('open')) {
+      abstract.classList.remove('open');
+      btn.textContent = '+ Abstract';
+    } else {
+      abstract.classList.add('open');
+      btn.textContent = '− Abstract';
+    }
+  }
+</script>
+</body>
+</html>
