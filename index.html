@@ -648,20 +648,41 @@
 </div>
 
 <script>
-  function showPage(id) {
-    var pages = document.querySelectorAll('.page');
-    for (var i = 0; i < pages.length; i++) {
-      pages[i].classList.remove('active');
-    }
-    var btns = document.querySelectorAll('.nav-links button');
-    for (var j = 0; j < btns.length; j++) {
-      btns[j].classList.remove('active');
-    }
-    document.getElementById(id).classList.add('active');
-    var navBtn = document.getElementById('nav-' + id);
-    if (navBtn) { navBtn.classList.add('active'); }
-    window.scrollTo(0, 0);
+// NEW — replace with this:
+function showPage(id, pushState) {
+  var pages = document.querySelectorAll('.page');
+  for (var i = 0; i < pages.length; i++) {
+    pages[i].classList.remove('active');
   }
+  var btns = document.querySelectorAll('.nav-links button');
+  for (var j = 0; j < btns.length; j++) {
+    btns[j].classList.remove('active');
+  }
+  document.getElementById(id).classList.add('active');
+  var navBtn = document.getElementById('nav-' + id);
+  if (navBtn) { navBtn.classList.add('active'); }
+  window.scrollTo(0, 0);
+
+  // Update the URL without reloading the page
+  if (pushState !== false) {
+    var newUrl = id === 'home' ? '/' : '/#' + id;
+    history.pushState({ page: id }, '', newUrl);
+  }
+}
+
+// Handle browser Back/Forward buttons
+window.addEventListener('popstate', function(e) {
+  var id = (e.state && e.state.page) ? e.state.page : 'home';
+  showPage(id, false); // false = don't push another history entry
+});
+
+// On first load, set the initial history state
+(function() {
+  var hash = window.location.hash.replace('#', '');
+  var startPage = hash || 'home';
+  history.replaceState({ page: startPage }, '', window.location.href);
+  if (hash) { showPage(startPage, false); }
+})();
 
   function toggleAbstract(btn) {
     var card = btn.parentNode;
