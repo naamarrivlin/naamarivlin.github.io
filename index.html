@@ -680,10 +680,17 @@ window.addEventListener('popstate', function(e) {
 (function() {
   var hash = window.location.hash.replace('#', '');
   var startPage = hash || 'home';
-  history.replaceState({ page: startPage }, '', window.location.href);
-  if (hash) { showPage(startPage, false); }
-})();
 
+  // First, plant a "home" entry at the bottom of the history stack
+  history.replaceState({ page: 'home' }, '', '/');
+
+  // If we landed on a non-home page, push it on top
+  if (startPage !== 'home') {
+    history.pushState({ page: startPage }, '', '/#' + startPage);
+    showPage(startPage, false);
+  }
+})();
+	
   function toggleAbstract(btn) {
     var card = btn.parentNode;
     while (card && !card.classList.contains('pub-card')) {
